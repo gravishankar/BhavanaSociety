@@ -1,0 +1,21 @@
+{
+  "name": "Bhavana Practice Companion",
+  "short_name": "Bhavana",
+  "description": "A simple companion for continued meditation practice after retreat.",
+  "start_url": "./bhavana-practice-companion.html",
+  "display": "standalone",
+  "background_color": "#f7f4ed",
+  "theme_color": "#6f5b2f",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

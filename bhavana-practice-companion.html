@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bhavana Practice Companion MVP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#6f5b2f" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <style>
+    :root {
+      --bg: #f7f4ed;
+      --surface: #fffdf9;
+      --surface-soft: #f1ece1;
+      --text: #25211b;
+      --muted: #666055;
+      --accent: #6f5b2f;
+      --accent-dark: #5c4b26;
+      --line: #ddd6c8;
+      --max: 1040px;
+      --radius: 18px;
+      --shadow: 0 10px 28px rgba(69, 56, 31, 0.06);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f4efe4 0%, #f7f4ed 120px, #f7f4ed 100%);
+      color: var(--text);
+      font-family: "Source Sans 3", sans-serif;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .top-strip {
+      background: #ece5d6;
+      border-bottom: 1px solid #d9cfbc;
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: #534c42;
+    }
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 16px 40px;
+    }
+    header {
+      text-align: center;
+      padding: 26px 0 18px;
+    }
+    .site-title {
+      font-family: "Libre Baskerville", serif;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      margin: 0;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .site-subtitle {
+      margin: 10px auto 0;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--muted);
+      max-width: 34rem;
+    }
+    .hero,
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: clamp(22px, 4vw, 40px);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: "Libre Baskerville", serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.18;
+      font-weight: 400;
+      margin: 0 0 16px;
+    }
+    .hero p {
+      max-width: 760px;
+      margin: 0 auto 14px;
+      font-size: clamp(1rem, 2vw, 1.12rem);
+      color: var(--muted);
+    }
+    .hero-note {
+      max-width: 760px;
+      margin: 22px auto 0;
+      padding: 18px 18px;
+      background: var(--surface-soft);
+      border-left: 4px solid var(--accent);
+      text-align: left;
+      border-radius: 12px;
+    }
+    .hero-note strong {
+      display: block;
+      margin-bottom: 8px;
+      font-family: "Libre Baskerville", serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+    .section-title {
+      font-family: "Libre Baskerville", serif;
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      font-weight: 400;
+      margin: 0 0 12px;
+      text-align: center;
+    }
+    .section-intro {
+      text-align: center;
+      color: var(--muted);
+      max-width: 700px;
+      margin: 0 auto 24px;
+      font-size: clamp(1rem, 2vw, 1.05rem);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr);
+      gap: 22px;
+      margin-bottom: 24px;
+      align-items: start;
+    }
+    .card {
+      padding: clamp(18px, 3vw, 24px);
+    }
+    .card h2 {
+      font-family: "Libre Baskerville", serif;
+      font-weight: 400;
+      font-size: clamp(1.35rem, 3vw, 1.7rem);
+      margin: 0 0 8px;
+      line-height: 1.3;
+    }
+    .card p {
+      color: var(--muted);
+      margin: 0 0 16px;
+      font-size: 1rem;
+    }
+    .practice-item {
+      border-top: 1px solid var(--line);
+      padding: 14px 0;
+    }
+    .practice-item:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+    .practice-name {
+      font-weight: 700;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+    .practice-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .practice-controls label,
+    .timer-note,
+    .list-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    input[type="number"] {
+      width: 88px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #cfc7b6;
+      background: #fff;
+      font-size: 16px;
+      border-radius: 10px;
+      color: var(--text);
+    }
+    button {
+      appearance: none;
+      min-height: 44px;
+      border: 1px solid #9b8b63;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 15px;
+      border-radius: 999px;
+      transition: background 180ms ease, transform 180ms ease;
+    }
+    button:hover { background: var(--accent-dark); }
+    button:active { transform: translateY(1px); }
+    button.secondary {
+      background: #fff;
+      color: var(--text);
+      border-color: #cbbf9d;
+    }
+    .timer-box {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+    .timer-name {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .timer-display {
+      font-family: "Libre Baskerville", serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      margin: 6px 0 12px;
+      line-height: 1;
+    }
+    .timer-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .chips button {
+      background: #fff;
+      color: var(--text);
+      border-color: #cbbf9d;
+    }
+    .coach-box,
+    .list-box {
+      background: var(--surface-soft);
+      padding: 16px;
+      border-left: 4px solid var(--accent);
+      min-height: 96px;
+      border-radius: 12px;
+    }
+    .day-rhythm {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .day-rhythm li {
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+    .day-rhythm li:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 14px 0 6px;
+    }
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 560px) {
+      .wrap { padding: 0 12px 28px; }
+      .top-strip { font-size: 13px; }
+      header { padding: 20px 0 16px; }
+      .hero { margin-bottom: 18px; }
+      .practice-controls {
+        align-items: stretch;
+      }
+      .practice-controls label {
+        width: 100%;
+      }
+      input[type="number"] {
+        width: 100%;
+      }
+      .practice-controls button,
+      .timer-actions button,
+      .chips button {
+        width: 100%;
+      }
+      .timer-actions,
+      .chips {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      .card { padding: 16px; }
+      .hero-note,
+      .coach-box {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-strip">A simple concept for continuing mindfulness practice after retreat</div>
+  <div class="wrap">
+    <header>
+      <p class="site-title">Bhavana Society</p>
+      <p class="site-subtitle">A simple companion for continued meditation practice</p>
+    </header>
+
+    <section class="hero">
+      <h1>Let the practice continue at home</h1>
+      <p>This quiet demonstration imagines a simple way to support daily sitting, walking, and mindful reflection after the structure of retreat has fallen away.</p>
+      <p>This is not meant to replace the living training of the monastery. It is only a humble support for continuity, helping practitioners remember the next small step in the midst of ordinary life.</p>
+      <div class="hero-note">
+        <strong>Practice intention</strong>
+        <span>This companion is meant to support sincerity, steadiness, and mindfulness in daily life through simple forms of practice and careful attention to the usual obstacles that arise along the way.</span>
+      </div>
+    </section>
+
+    <h2 class="section-title">Daily practice</h2>
+    <p class="section-intro">Choose a form of practice, keep or adjust the suggested time, and begin. The tool remains simple so that attention can stay close to the practice itself.</p>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Practice timer</h2>
+        <p>Set a sincere commitment for the sitting or walking period and begin when ready.</p>
+
+        <div class="practice-item">
+          <div class="practice-name">Morning sitting meditation</div>
+          <div class="practice-controls">
+            <label for="morningMins">Minutes</label>
+            <input id="morningMins" type="number" min="1" value="20" />
+            <button onclick="startPractice('Morning sitting meditation', 'morningMins')">Begin</button>
+          </div>
+        </div>
+
+        <div class="practice-item">
+          <div class="practice-name">Walking meditation</div>
+          <div class="practice-controls">
+            <label for="walkingMins">Minutes</label>
+            <input id="walkingMins" type="number" min="1" value="10" />
+            <button onclick="startPractice('Walking meditation', 'walkingMins')">Begin</button>
+          </div>
+        </div>
+
+        <div class="practice-item">
+          <div class="practice-name">Evening sitting meditation</div>
+          <div class="practice-controls">
+            <label for="eveningMins">Minutes</label>
+            <input id="eveningMins" type="number" min="1" value="30" />
+            <button onclick="startPractice('Evening sitting meditation', 'eveningMins')">Begin</button>
+          </div>
+        </div>
+
+        <div class="timer-box">
+          <div class="timer-name" id="timerName">Practice has not yet begun</div>
+          <div class="timer-display" id="timerDisplay">00:00</div>
+          <div class="timer-actions">
+            <button onclick="runTimer()">Resume</button>
+            <button class="secondary" onclick="pauseTimer()">Pause</button>
+            <button class="secondary" onclick="resetTimer()">Reset</button>
+          </div>
+          <div class="timer-note" id="timerNote">Select a practice above to begin. A simple ending chime placeholder is included in this demonstration.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Working with obstacles</h2>
+        <p>Choose the difficulty that best matches the sitting. The guidance is brief, practical, and meant to support a calm return to mindfulness.</p>
+        <div class="chips">
+          <button onclick="showCoach('drowsiness')">Drowsiness</button>
+          <button onclick="showCoach('boredom')">Boredom</button>
+          <button onclick="showCoach('pain')">Physical discomfort</button>
+          <button onclick="showCoach('agitation')">Fear or agitation</button>
+          <button onclick="showCoach('judgment')">Judgment or self-criticism</button>
+          <button onclick="showCoach('concentration')">Inability to concentrate</button>
+        </div>
+        <div class="coach-box" id="coachBox">Choose one of the common difficulties above to see a short reminder for practice.</div>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Carrying retreat into the day</h2>
+      <p>A simple rhythm inspired by retreat life, translated gently into home life.</p>
+      <ul class="day-rhythm">
+        <li>Morning: sit before phone, email, or conversation.</li>
+        <li>Midday: pause for a few mindful walking steps.</li>
+        <li>During work: pause mindfully before transitions.</li>
+        <li>Evening: brief reflection and quiet sitting.</li>
+      </ul>
+      <p class="list-note">This section is only a sketch of direction, not a finished practice program.</p>
+    </section>
+
+    <footer>
+      A simple HTML MVP prepared to convey the concept of a quiet post-retreat practice companion.
+    </footer>
+  </div>
+
+  <script>
+    const coachTexts = {
+      drowsiness: 'Drowsiness is a normal obstacle in meditation. Notice it clearly, refresh energy, and begin again without turning dullness into discouragement.',
+      boredom: 'When boredom appears, look more carefully. Instead of seeking stimulation, make the feeling itself part of mindfulness.',
+      pain: 'Meet physical discomfort with mindfulness and honesty. Observe the sensation carefully, distinguish the raw feeling from resistance, and adjust posture wisely when needed.',
+      agitation: 'Fear and agitation can arise in practice. Acknowledge them clearly, avoid building a story around them, and return to steady observation with patience.',
+      judgment: 'Judgment and self-criticism are obstacles, not failures. Let them be known, release harshness, and begin again simply.',
+      concentration: 'Difficulty concentrating is part of learning. Return gently and repeatedly to the chosen object, allowing steadiness to grow over time.'
+    };
+
+    let totalSeconds = 0;
+    let remainingSeconds = 0;
+    let timerInterval = null;
+    let selectedPractice = '';
+
+    function showCoach(key) {
+      document.getElementById('coachBox').textContent = coachTexts[key];
+    }
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const secs = (seconds % 60).toString().padStart(2, '0');
+      return mins + ':' + secs;
+    }
+
+    function updateTimerUI() {
+      document.getElementById('timerDisplay').textContent = formatTime(remainingSeconds);
+    }
+
+    function startPractice(name, inputId) {
+      const el = document.getElementById(inputId);
+      const mins = parseInt(el.value, 10);
+      if (!mins || mins < 1) {
+        document.getElementById('timerNote').textContent = 'Please enter at least 1 minute.';
+        return;
+      }
+      pauseTimer();
+      selectedPractice = name;
+      totalSeconds = mins * 60;
+      remainingSeconds = totalSeconds;
+      document.getElementById('timerName').textContent = name + ' — ' + mins + ' minute commitment';
+      document.getElementById('timerNote').textContent = 'Timer loaded. Press Resume to begin, Pause to stop, or Reset to return to the chosen commitment. When time is complete, a gentle ending chime placeholder will appear.';
+      updateTimerUI();
+    }
+
+    function runTimer() {
+      if (!remainingSeconds || remainingSeconds < 1) return;
+      pauseTimer();
+      timerInterval = setInterval(() => {
+        remainingSeconds -= 1;
+        updateTimerUI();
+        if (remainingSeconds <= 0) {
+          pauseTimer();
+          remainingSeconds = 0;
+          updateTimerUI();
+          document.getElementById('timerNote').textContent = 'Session complete. Ending chime placeholder: the period of practice ends here with a gentle bell.';
+        }
+      }, 1000);
+      document.getElementById('timerNote').textContent = selectedPractice ? 'Practice is underway. Remain with the sitting or walking gently until the timer completes.' : 'Select a practice above first.';
+    }
+
+    function pauseTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      remainingSeconds = totalSeconds;
+      updateTimerUI();
+      document.getElementById('timerNote').textContent = totalSeconds > 0 ? 'Timer reset to the chosen commitment.' : 'Select a practice above to begin.';
+    }
+
+    updateTimerUI();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
