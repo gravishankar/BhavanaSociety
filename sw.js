@@ -1,5 +1,7 @@
-const CACHE_NAME = 'bhavana-practice-v1';
+const CACHE_NAME = 'bhavana-practice-v2';
 const ASSETS = [
+  './',
+  './index.html',
   './bhavana-practice-companion.html',
   './manifest.webmanifest',
   './icons/icon-192.png',
@@ -19,6 +21,9 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  if (new URL(event.request.url).origin !== self.location.origin) return;
+
   event.respondWith(
     caches.match(event.request).then(response => response || fetch(event.request))
   );
