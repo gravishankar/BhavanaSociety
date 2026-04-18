@@ -353,7 +353,7 @@
             <button class="secondary" onclick="pauseTimer()">Pause</button>
             <button class="secondary" onclick="resetTimer()">Reset</button>
           </div>
-          <div class="timer-note" id="timerNote">Select a practice above to begin. A simple ending chime placeholder is included in this demonstration.</div>
+          <div class="timer-note" id="timerNote">Select a practice above to begin. When the session ends, a gentle bell will sound.</div>
         </div>
       </article>
 
@@ -403,6 +403,55 @@
     let remainingSeconds = 0;
     let timerInterval = null;
     let selectedPractice = '';
+    let audioContext = null;
+
+    function primeAudioContext() {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioContext) audioContext = new AC();
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().catch(() => {});
+      }
+    }
+
+    /** Soft Tibetan-style bowl: short rise, long decay, low fundamental + gentle overtones. */
+    function playEndingChime() {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioContext) audioContext = new AC();
+
+      const ring = () => {
+        const ctx = audioContext;
+        const t0 = ctx.currentTime;
+        const min = 0.0001;
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(min, t0);
+        master.gain.exponentialRampToValueAtTime(0.26, t0 + 0.03);
+        master.gain.exponentialRampToValueAtTime(0.06, t0 + 1.4);
+        master.gain.exponentialRampToValueAtTime(min, t0 + 5.5);
+        master.connect(ctx.destination);
+
+        const freqs = [311, 622, 933];
+        const levels = [0.55, 0.2, 0.08];
+        freqs.forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, t0);
+          const g = ctx.createGain();
+          g.gain.value = levels[i];
+          osc.connect(g);
+          g.connect(master);
+          osc.start(t0);
+          osc.stop(t0 + 5.6);
+        });
+      };
+
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().then(ring).catch(() => {});
+      } else {
+        ring();
+      }
+    }
 
     function showCoach(key) {
       document.getElementById('coachBox').textContent = coachTexts[key];
@@ -426,17 +475,19 @@
         return;
       }
       pauseTimer();
+      primeAudioContext();
       selectedPractice = name;
       totalSeconds = mins * 60;
       remainingSeconds = totalSeconds;
       document.getElementById('timerName').textContent = name + ' — ' + mins + ' minute commitment';
-      document.getElementById('timerNote').textContent = 'Timer loaded. Press Resume to begin, Pause to stop, or Reset to return to the chosen commitment. When time is complete, a gentle ending chime placeholder will appear.';
+      document.getElementById('timerNote').textContent = 'Timer loaded. Press Resume to begin, Pause to stop, or Reset to return to the chosen commitment. When time is complete, a gentle bell will sound.';
       updateTimerUI();
     }
 
     function runTimer() {
       if (!remainingSeconds || remainingSeconds < 1) return;
       pauseTimer();
+      primeAudioContext();
       timerInterval = setInterval(() => {
         remainingSeconds -= 1;
         updateTimerUI();
@@ -444,7 +495,8 @@
           pauseTimer();
           remainingSeconds = 0;
           updateTimerUI();
-          document.getElementById('timerNote').textContent = 'Session complete. Ending chime placeholder: the period of practice ends here with a gentle bell.';
+          playEndingChime();
+          document.getElementById('timerNote').textContent = 'Session complete. The period of practice ends here with a gentle bell.';
         }
       }, 1000);
       document.getElementById('timerNote').textContent = selectedPractice ? 'Practice is underway. Remain with the sitting or walking gently until the timer completes.' : 'Select a practice above first.';

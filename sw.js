@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bhavana-practice-v2';
+const CACHE_NAME = 'bhavana-practice-v3';
 const ASSETS = [
   './',
   './index.html',
