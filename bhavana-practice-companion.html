@@ -353,7 +353,7 @@
             <button class="secondary" onclick="pauseTimer()">Pause</button>
             <button class="secondary" onclick="resetTimer()">Reset</button>
           </div>
-          <div class="timer-note" id="timerNote">Select a practice above to begin. When the session ends, a gentle bell will sound.</div>
+          <div class="timer-note" id="timerNote">Select a practice above to begin. When you start, three gentle bells mark the beginning; one bell marks the end.</div>
         </div>
       </article>
 
@@ -414,36 +414,71 @@
       }
     }
 
-    /** Soft Tibetan-style bowl: short rise, long decay, low fundamental + gentle overtones. */
-    function playEndingChime() {
+    /**
+     * Soft Tibetan-style bowl at scheduled audio time.
+     * @param {'start'|'end'} kind — start strikes are softer and shorter; end is the closing bell.
+     */
+    function playChimeAt(scheduledTime, kind) {
+      const ctx = audioContext;
+      const t0 = scheduledTime;
+      const min = 0.0001;
+      const isEnd = kind === 'end';
+      const peak = isEnd ? 0.26 : 0.16;
+      const mid = isEnd ? 0.06 : 0.035;
+      const tail = isEnd ? 5.5 : 2.65;
+      const oscStop = isEnd ? 5.6 : 2.75;
+
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(min, t0);
+      master.gain.exponentialRampToValueAtTime(peak, t0 + 0.03);
+      master.gain.exponentialRampToValueAtTime(mid, t0 + (isEnd ? 1.4 : 0.75));
+      master.gain.exponentialRampToValueAtTime(min, t0 + tail);
+      master.connect(ctx.destination);
+
+      const freqs = [311, 622, 933];
+      const levels = [0.55, 0.2, 0.08];
+      freqs.forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t0);
+        const g = ctx.createGain();
+        g.gain.value = levels[i];
+        osc.connect(g);
+        g.connect(master);
+        osc.start(t0);
+        osc.stop(t0 + oscStop);
+      });
+    }
+
+    /** Three gentle spaced chimes when the sitting/walking period begins. */
+    function playSessionStartChimes() {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
       if (!audioContext) audioContext = new AC();
 
       const ring = () => {
         const ctx = audioContext;
-        const t0 = ctx.currentTime;
-        const min = 0.0001;
-        const master = ctx.createGain();
-        master.gain.setValueAtTime(min, t0);
-        master.gain.exponentialRampToValueAtTime(0.26, t0 + 0.03);
-        master.gain.exponentialRampToValueAtTime(0.06, t0 + 1.4);
-        master.gain.exponentialRampToValueAtTime(min, t0 + 5.5);
-        master.connect(ctx.destination);
+        const now = ctx.currentTime;
+        const gap = 1.12;
+        for (let i = 0; i < 3; i++) {
+          playChimeAt(now + i * gap, 'start');
+        }
+      };
 
-        const freqs = [311, 622, 933];
-        const levels = [0.55, 0.2, 0.08];
-        freqs.forEach((f, i) => {
-          const osc = ctx.createOscillator();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(f, t0);
-          const g = ctx.createGain();
-          g.gain.value = levels[i];
-          osc.connect(g);
-          g.connect(master);
-          osc.start(t0);
-          osc.stop(t0 + 5.6);
-        });
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().then(ring).catch(() => {});
+      } else {
+        ring();
+      }
+    }
+
+    function playEndingChime() {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioContext) audioContext = new AC();
+
+      const ring = () => {
+        playChimeAt(audioContext.currentTime, 'end');
       };
 
       if (audioContext.state === 'suspended') {
@@ -480,7 +515,7 @@
       totalSeconds = mins * 60;
       remainingSeconds = totalSeconds;
       document.getElementById('timerName').textContent = name + ' — ' + mins + ' minute commitment';
-      document.getElementById('timerNote').textContent = 'Timer loaded. Press Resume to begin, Pause to stop, or Reset to return to the chosen commitment. When time is complete, a gentle bell will sound.';
+      document.getElementById('timerNote').textContent = 'Timer loaded. Press Resume to begin (three opening bells), Pause to stop, or Reset. When time is complete, one closing bell will sound.';
       updateTimerUI();
     }
 
@@ -488,6 +523,7 @@
       if (!remainingSeconds || remainingSeconds < 1) return;
       pauseTimer();
       primeAudioContext();
+      playSessionStartChimes();
       timerInterval = setInterval(() => {
         remainingSeconds -= 1;
         updateTimerUI();
