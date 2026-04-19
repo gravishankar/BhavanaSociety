@@ -415,38 +415,45 @@
     }
 
     /**
-     * Soft Tibetan-style bowl at scheduled audio time.
-     * @param {'start'|'end'} kind — start strikes are softer and shorter; end is the closing bell.
+     * Clear meditation-hall bell (harmonic partials, quick attack, long decay).
+     * Timbre inspired by common Plum Village / silent-timer bells such as
+     * https://www.youtube.com/watch?v=p0nhVS1hkSI — not a recording of that video.
+     * @param {'start'|'end'} kind — opening strikes are softer and shorter than the closing bell.
      */
     function playChimeAt(scheduledTime, kind) {
       const ctx = audioContext;
       const t0 = scheduledTime;
       const min = 0.0001;
       const isEnd = kind === 'end';
-      const peak = isEnd ? 0.26 : 0.16;
-      const mid = isEnd ? 0.06 : 0.035;
-      const tail = isEnd ? 5.5 : 2.65;
-      const oscStop = isEnd ? 5.6 : 2.75;
+      const master = isEnd ? 0.34 : 0.2;
 
-      const master = ctx.createGain();
-      master.gain.setValueAtTime(min, t0);
-      master.gain.exponentialRampToValueAtTime(peak, t0 + 0.03);
-      master.gain.exponentialRampToValueAtTime(mid, t0 + (isEnd ? 1.4 : 0.75));
-      master.gain.exponentialRampToValueAtTime(min, t0 + tail);
-      master.connect(ctx.destination);
+      const partials = isEnd
+        ? [
+            { f: 392, rel: 1, decay: 6.2 },
+            { f: 784, rel: 0.34, decay: 4.9 },
+            { f: 1176, rel: 0.11, decay: 3.4 },
+            { f: 1568, rel: 0.035, decay: 2.2 }
+          ]
+        : [
+            { f: 392, rel: 1, decay: 3.3 },
+            { f: 784, rel: 0.3, decay: 2.5 },
+            { f: 1176, rel: 0.09, decay: 1.7 },
+            { f: 1568, rel: 0.028, decay: 1.1 }
+          ];
 
-      const freqs = [311, 622, 933];
-      const levels = [0.55, 0.2, 0.08];
-      freqs.forEach((f, i) => {
+      partials.forEach((p) => {
         const osc = ctx.createOscillator();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(f, t0);
+        osc.frequency.setValueAtTime(p.f, t0);
         const g = ctx.createGain();
-        g.gain.value = levels[i];
+        const peak = Math.max(0.002, master * p.rel * 0.88);
+        g.gain.setValueAtTime(min, t0);
+        g.gain.exponentialRampToValueAtTime(peak, t0 + 0.02);
+        g.gain.exponentialRampToValueAtTime(min, t0 + p.decay);
         osc.connect(g);
-        g.connect(master);
+        g.connect(ctx.destination);
         osc.start(t0);
-        osc.stop(t0 + oscStop);
+        osc.stop(t0 + p.decay + 0.08);
       });
     }
 
@@ -459,9 +466,9 @@
       const ring = () => {
         const ctx = audioContext;
         const now = ctx.currentTime;
-        const gap = 1.12;
+        const gapBetweenStrikes = 2.2;
         for (let i = 0; i < 3; i++) {
-          playChimeAt(now + i * gap, 'start');
+          playChimeAt(now + i * gapBetweenStrikes, 'start');
         }
       };
 
