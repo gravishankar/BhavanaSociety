@@ -119,6 +119,32 @@ SEGMENTS = [
   {"phase":"close","index":9,  "filename":"close_09.mp3","text":"Take one slow breath."},
   {"phase":"close","index":10, "filename":"close_10.mp3","text":"And when you are ready, gently open the eyes."},
   {"phase":"close","index":11, "filename":"close_11.mp3","text":"Carry whatever stillness you have found here into the rest of your day."},
+
+  # ── DISTRACTION RESPONSES ──────────────────────────────────
+  # thoughts
+  {"phase":"distraction","index":1,  "filename":"distraction_thoughts_1.mp3","text":"The mind wandered — and now it has returned. This is exactly the practice. Without the wandering, there is nothing to return from. Gently, without scolding, bring the attention back to the breath. The breath is always here, always patient."},
+  {"phase":"distraction","index":2,  "filename":"distraction_thoughts_2.mp3","text":"Thoughts are like clouds moving through the sky — the sky does not chase them. You are the sky. Let the thought be seen, noted simply as thinking, and release it. Return to the breath."},
+  {"phase":"distraction","index":3,  "filename":"distraction_thoughts_3.mp3","text":"Notice that you noticed. That noticing is awareness itself — pure, clear, unconditioned. From that awareness, let the breath be the anchor. One breath at a time. This moment. This breath."},
+  # discomfort
+  {"phase":"distraction","index":4,  "filename":"distraction_discomfort_1.mp3","text":"Before moving, bring a gentle curiosity to the sensation. Where is it exactly? What is its quality — sharp, dull, spreading, throbbing? Does it change as you observe it? Often the direct attention of mindfulness itself is enough to soften discomfort. If it is calling for a postural adjustment, move slowly and deliberately — without losing awareness."},
+  {"phase":"distraction","index":5,  "filename":"distraction_discomfort_2.mp3","text":"The body holds tension we carry unconsciously. Meet this discomfort as a teacher. Breathe into the area with kindness. If it is simply the protest of an unused muscle, let equanimity hold it — knowing it will pass. If it is genuine pain, attend to the body with the same compassion you would offer a dear friend."},
+  {"phase":"distraction","index":6,  "filename":"distraction_discomfort_3.mp3","text":"Offer the discomfort the quality of compassion. The body is impermanent, these sensations are impermanent. You need not fight them, nor be ruled by them. Simply observe, with a steady and open attention, what is here."},
+  # drowsy
+  {"phase":"distraction","index":7,  "filename":"distraction_drowsy_1.mp3","text":"Drowsiness is one of the five hindrances — and like all of them, it responds to being seen clearly. Open the eyes slightly. Lift the gaze. Sit up a little taller and take a few slightly fuller breaths. You are brightening the quality of attention — not forcing, but kindling."},
+  {"phase":"distraction","index":8,  "filename":"distraction_drowsy_2.mp3","text":"When the dullness is heavy, the walking practice is a gift. Even a few minutes of slow, deliberate walking can wake the mind and bring it into the present moment far more readily than sitting with heavy eyes. Consider transitioning to walking, then returning to the sitting."},
+  {"phase":"distraction","index":9,  "filename":"distraction_drowsy_3.mp3","text":"Bring energy to the practice. Not straining, but a gentle determination. Notice the texture of the drowsiness itself — is it heavy, foggy, warm? Curiosity itself is the antidote to dullness."},
+  # restless
+  {"phase":"distraction","index":10, "filename":"distraction_restless_1.mp3","text":"Do not fight the restlessness — that is like trying to flatten water with your hands. Instead, let it be the object of meditation. Where does it live in the body? Is it in the chest? The jaw? The hands? Name it quietly: restlessness, restlessness. The act of observing loosens its hold."},
+  {"phase":"distraction","index":11, "filename":"distraction_restless_2.mp3","text":"Restlessness often carries urgency — the feeling that something must be done right now. This urgency is also just a mental event. Let the breath become the anchor: long, slow, deliberate breaths. Let each exhale be a small release. You do not need to act on this urgency. It will pass."},
+  {"phase":"distraction","index":12, "filename":"distraction_restless_3.mp3","text":"Recall why you sat down. Not to achieve anything, not to be somewhere else — but to cultivate the steadiness of mind that makes everything else possible. Restlessness, I see you. Now return. Breath by breath."},
+  # doubt
+  {"phase":"distraction","index":13, "filename":"distraction_doubt_1.mp3","text":"Doubt is the fifth hindrance — and it often arrives dressed as wisdom. Is this working? Am I doing it right? Does this even matter? Notice that this too is just a thought arising in the mind. You do not need to answer these questions right now. Return to what is directly known: the breath, the body, this moment."},
+  {"phase":"distraction","index":14, "filename":"distraction_doubt_2.mp3","text":"Trust what you have already tasted from this practice — even the small moments of stillness, of returning, of noticing. Those are real. Doubt cannot take them away. Continue, humbly and without fanfare. The clarity comes not by forcing but by continuing."},
+  {"phase":"distraction","index":15, "filename":"distraction_doubt_3.mp3","text":"The proof of the practice is not in the session, but in the quality of the life you lead between sessions. You are building something slowly. The doubt you feel is the resistance before the ground gives way. Simply sit. Simply practice."},
+  # emotion
+  {"phase":"distraction","index":16, "filename":"distraction_emotion_1.mp3","text":"When strong emotions arise in meditation, they are not obstacles — they are the practice itself. You are being shown what needs to be seen. Do not push the emotion away, and do not be swept into its story. Simply stay with the feeling as a physical sensation: where is it in the body? What is its quality? Breathe with it. Let it be seen."},
+  {"phase":"distraction","index":17, "filename":"distraction_emotion_2.mp3","text":"Meet this emotion with loving-friendliness extended first to yourself. You are a human being, and you are feeling what human beings feel. This is not weakness. Whisper inwardly: may I hold this with gentleness. May I hold this with courage. May I find relief and ease. Then return, slowly, to the breath."},
+  {"phase":"distraction","index":18, "filename":"distraction_emotion_3.mp3","text":"The heart must be soft enough to feel and strong enough to hold what it feels. Allow the emotion its space — without elaborating the story around it, and without suppressing it. Just this feeling. Just this breath. Just this moment. You are safe here."},
 ]
 
 # ─────────────────────────────────────────────────────────────
@@ -163,7 +189,7 @@ def generate_audio(model, segment, output_path, speed):
 # ─────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Generate Bhavana Practice Companion audio")
-    parser.add_argument("--phase",   help="Only one phase: settle|sitting|walking_intro|walking|close")
+    parser.add_argument("--phase",   help="Only one phase: settle|sitting|walking_intro|walking|close|distraction")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force",   action="store_true")
     parser.add_argument("--speed",   type=float, default=0.82)
