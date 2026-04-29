@@ -1,246 +1,1433 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bhavana Practice Companion</title>
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <meta name="theme-color" content="#6f5b2f" />
-  <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f7f4ed; color: #25211b; }
-    .wrap { max-width: 920px; margin: 0 auto; padding: 20px; }
-    .card { background: #fffdf9; border: 1px solid #ddd6c8; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
-    h1, h2 { margin: 0 0 10px; }
-    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
-    label { font-size: 14px; color: #666055; }
-    input, select { min-height: 38px; border: 1px solid #cfc7b6; border-radius: 8px; padding: 6px 10px; background: #fff; }
-    button { min-height: 40px; border: 1px solid #9b8b63; background: #6f5b2f; color: #fff; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
-    button.secondary { background: #fff; color: #25211b; }
-    .timer { font-size: 40px; margin: 8px 0; font-weight: 700; }
-    .muted { color: #666055; font-size: 14px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Bhāvanā — Practice Companion</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#0D1410">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════════════ */
+:root {
+  --bg:        #0D1410;
+  --bg2:       #111A14;
+  --surface:   #182218;
+  --surface2:  #1E2B1E;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #E8EFE6;
+  --text2:     #8FA88A;
+  --text3:     #4F6450;
+
+  --sage:      #6BAD8A;
+  --sage-d:    #3D7A5A;
+  --sage-glow: rgba(107,173,138,0.25);
+  --sage-bg:   rgba(107,173,138,0.08);
+
+  --amber:     #C8943C;
+  --amber-d:   #8A6020;
+  --amber-glow:rgba(200,148,60,0.25);
+  --amber-bg:  rgba(200,148,60,0.08);
+
+  --clay:      #B06060;
+  --clay-d:    #7A3030;
+  --clay-glow: rgba(176,96,96,0.25);
+  --clay-bg:   rgba(176,96,96,0.08);
+
+  --slate:     #7090B0;
+  --slate-d:   #405070;
+  --slate-glow:rgba(112,144,176,0.25);
+  --slate-bg:  rgba(112,144,176,0.08);
+
+  --gold:      #C8A84B;
+  --r:         12px;
+  --r-lg:      20px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Lato',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  max-width:480px;
+  margin:0 auto;
+  position:relative;
+}
+button{font-family:'Lato',sans-serif;cursor:pointer;border:none;background:none;}
+a{text-decoration:none;color:inherit;}
+input,textarea,select{font-family:'Lato',sans-serif;}
+
+/* ═══════════════════════════════════════════════════════
+   AMBIENT ORBS
+═══════════════════════════════════════════════════════ */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.amb-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.10;animation:amb-drift 22s ease-in-out infinite alternate;}
+.amb-1{width:280px;height:280px;background:var(--sage);top:-60px;left:-60px;animation-delay:0s;}
+.amb-2{width:220px;height:220px;background:var(--amber);bottom:25%;right:-50px;animation-delay:-8s;}
+.amb-3{width:160px;height:160px;background:var(--slate);top:55%;left:35%;animation-delay:-15s;}
+@keyframes amb-drift{from{transform:translate(0,0) scale(1);}to{transform:translate(25px,18px) scale(1.08);}}
+
+#app{position:relative;z-index:1;}
+
+/* ═══════════════════════════════════════════════════════
+   ONBOARDING
+═══════════════════════════════════════════════════════ */
+#onboard{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:2rem 1.5rem 3rem;text-align:center;
+}
+.ob-logo{
+  font-family:'Playfair Display',serif;
+  font-size:2.8rem;font-weight:300;letter-spacing:0.06em;
+  color:var(--text);margin-bottom:0.3rem;
+}
+.ob-logo span{color:var(--sage);}
+.ob-subtitle{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);margin-bottom:3rem;}
+
+.ob-orb{width:160px;height:160px;margin:0 auto 3rem;position:relative;display:flex;align-items:center;justify-content:center;}
+.ob-orb-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(107,173,138,0.2);animation:ob-ring-expand 3s ease-in-out infinite;}
+.ob-orb-ring:nth-child(2){animation-delay:1s;inset:-16px;border-color:rgba(107,173,138,0.12);}
+.ob-orb-ring:nth-child(3){animation-delay:2s;inset:-32px;border-color:rgba(107,173,138,0.06);}
+.ob-orb-core{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,var(--sage) 0%,var(--sage-d) 60%,#1A4A30 100%);box-shadow:0 0 40px var(--sage-glow);animation:ob-breathe 4s ease-in-out infinite;}
+@keyframes ob-ring-expand{0%,100%{transform:scale(1);opacity:0.6;}50%{transform:scale(1.05);opacity:1;}}
+@keyframes ob-breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+.ob-quote{font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;line-height:1.8;color:var(--text2);margin-bottom:0.75rem;max-width:340px;}
+.ob-attr{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:3.5rem;}
+
+.ob-types{display:flex;justify-content:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:3.5rem;}
+.ob-chip{padding:6px 14px;border-radius:50px;font-size:0.72rem;border:1px solid var(--border2);color:var(--text2);}
+
+.ob-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--sage);color:#0D1410;
+  border-radius:50px;padding:14px 40px;
+  font-size:0.9rem;font-weight:700;letter-spacing:0.06em;
+  transition:all 0.2s;box-shadow:0 8px 32px var(--sage-glow);
+}
+.ob-btn:hover{transform:translateY(-1px);box-shadow:0 12px 40px var(--sage-glow);}
+.ob-note{margin-top:1.25rem;font-size:0.68rem;color:var(--text3);letter-spacing:0.08em;}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN SHELL
+═══════════════════════════════════════════════════════ */
+#main{display:none;}
+
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 1.25rem 0.9rem;
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,20,16,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.tb-logo{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:400;letter-spacing:0.04em;}
+.tb-logo span{color:var(--sage);}
+.tb-streak{display:flex;align-items:center;gap:6px;background:var(--surface);border-radius:50px;padding:5px 12px 5px 8px;font-size:0.75rem;color:var(--text2);}
+
+/* ═══════════════════════════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════════════════════════ */
+.bnav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;
+  display:flex;background:rgba(24,34,24,0.96);backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);z-index:200;
+  padding-bottom:env(safe-area-inset-bottom,0);
+}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 8px;color:var(--text3);transition:color 0.2s;}
+.bn-item.active{color:var(--sage);}
+.bn-ico{font-size:1.1rem;height:22px;display:flex;align-items:center;justify-content:center;}
+.bn-lbl{font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;}
+
+/* ═══════════════════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════════════════ */
+.screen{display:none;padding:1.25rem 1.25rem 90px;animation:screen-in 0.3s ease;}
+.screen.active{display:block;}
+@keyframes screen-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ═══════════════════════════════════════════════════════
+   HOME SCREEN
+═══════════════════════════════════════════════════════ */
+.home-hero{
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:1.5rem;margin-bottom:1.25rem;
+  position:relative;overflow:hidden;
+}
+.home-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 100% at 85% 0%,rgba(107,173,138,0.12) 0%,transparent 65%);}
+.hh-inner{position:relative;}
+.hh-greeting{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.hh-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;line-height:1.25;margin-bottom:0.5rem;}
+.hh-desc{font-size:0.82rem;color:var(--text2);line-height:1.6;margin-bottom:1.25rem;}
+.hh-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--sage);color:#0D1410;
+  border-radius:50px;padding:10px 24px;
+  font-size:0.82rem;font-weight:700;
+  transition:all 0.15s;
+}
+.hh-cta:hover{opacity:0.9;}
+
+.sec-label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3);margin-bottom:0.9rem;margin-top:1.5rem;}
+
+/* Session type cards */
+.session-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:0.5rem;}
+.sess-card{
+  display:flex;align-items:center;gap:14px;
+  background:var(--surface);border-radius:var(--r);
+  padding:1rem 1.1rem;cursor:pointer;
+  border:1px solid var(--border);transition:all 0.15s;
+}
+.sess-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.sess-orb{width:46px;height:46px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;position:relative;}
+.sess-orb-glow{position:absolute;inset:-4px;border-radius:50%;opacity:0;transition:opacity 0.2s;}
+.sess-card:hover .sess-orb-glow{opacity:1;}
+.sess-info{flex:1;}
+.sess-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:400;margin-bottom:2px;}
+.sess-desc{font-size:0.72rem;color:var(--text2);line-height:1.4;}
+.sess-meta{display:flex;align-items:center;gap:6px;margin-top:5px;}
+.sess-dur{font-size:0.65rem;color:var(--text3);background:var(--surface2);padding:2px 8px;border-radius:20px;}
+.sess-play{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.7rem;border:1px solid var(--border2);color:var(--text2);transition:all 0.15s;}
+.sess-card:hover .sess-play{background:var(--sage);color:#0D1410;border-color:var(--sage);}
+
+.closing{text-align:center;padding:1.5rem 0.5rem;border-top:1px solid var(--border);margin-top:0.5rem;}
+.cl-text{font-family:'Playfair Display',serif;font-style:italic;font-size:0.9rem;color:var(--text2);line-height:2.2;margin-bottom:0.5rem;}
+.cl-attr{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);}
+
+/* ═══════════════════════════════════════════════════════
+   GUIDANCE SCREEN
+═══════════════════════════════════════════════════════ */
+.guide-hero{
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:1.5rem;margin-bottom:1.25rem;position:relative;overflow:hidden;
+}
+.guide-hero-glow{position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;filter:blur(60px);opacity:0.2;}
+.gh-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:400;margin-bottom:0.4rem;position:relative;}
+.gh-sub{font-size:0.72rem;color:var(--text2);line-height:1.6;position:relative;}
+
+.guide-section{margin-bottom:1.5rem;}
+.gs-head{font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:0.75rem;}
+.guide-card{
+  background:var(--surface);border-radius:var(--r);
+  padding:1rem 1.1rem;margin-bottom:8px;
+  border:1px solid var(--border);
+}
+.gc-title{font-size:0.82rem;font-weight:700;margin-bottom:5px;}
+.gc-body{font-size:0.8rem;color:var(--text2);line-height:1.7;}
+.gc-phrase{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:0.88rem;color:var(--text2);line-height:1.9;
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--border);
+}
+
+.bq-box{background:rgba(0,0,0,0.3);border-radius:var(--r);padding:1rem 1.1rem;border-left:2px solid var(--sage);margin-bottom:1rem;}
+.bq-text{font-family:'Playfair Display',serif;font-style:italic;font-size:0.9rem;color:var(--text2);line-height:1.75;margin-bottom:6px;}
+.bq-attr{font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);}
+
+/* ═══════════════════════════════════════════════════════
+   JOURNAL SCREEN
+═══════════════════════════════════════════════════════ */
+.streak-card{
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:1.25rem 1.5rem;margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:1.25rem;
+  border:1px solid var(--border);position:relative;overflow:hidden;
+}
+.streak-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 90% 50%,rgba(107,173,138,0.08),transparent);}
+.sc-inner{position:relative;}
+.sc-num{font-family:'Playfair Display',serif;font-size:3rem;font-weight:300;line-height:1;color:var(--sage);}
+.sc-lbl{font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);}
+.sc-wk{display:flex;gap:6px;margin-left:auto;position:relative;}
+.sc-day{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.sc-dlbl{font-size:0.58rem;color:var(--text3);}
+.sc-dpip{width:8px;height:8px;border-radius:50%;background:var(--surface2);}
+.sc-dpip.on{background:var(--sage);}
+
+.today-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem;}
+.tt{background:var(--surface);border-radius:var(--r);padding:1rem;border:1.5px solid var(--border);cursor:pointer;text-align:center;transition:all 0.15s;}
+.tt:active{transform:scale(0.96);}
+.tt-ck{font-size:1.4rem;height:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;}
+.tt-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;margin-bottom:2px;}
+.tt-sub{font-size:0.65rem;color:var(--text3);}
+
+.reflect-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;}
+.rc{background:var(--surface);border-radius:var(--r);padding:1rem;border:1px solid var(--border);}
+.rc-q{font-size:0.8rem;font-weight:700;margin-bottom:8px;}
+.rc-ta{width:100%;border:none;background:rgba(0,0,0,0.2);border-radius:8px;padding:10px 12px;font-size:0.8rem;color:var(--text);resize:none;min-height:68px;line-height:1.6;outline:none;border:1px solid rgba(255,255,255,0.04);}
+.rc-ta::placeholder{color:var(--text3);}
+.save-refl{width:100%;padding:13px;border-radius:var(--r);background:var(--sage);color:#0D1410;font-weight:700;font-size:0.88rem;letter-spacing:0.04em;transition:all 0.2s;box-shadow:0 4px 20px var(--sage-glow);}
+.save-refl:hover{opacity:0.9;transform:translateY(-1px);}
+
+/* ═══════════════════════════════════════════════════════
+   PLAYER (full-screen immersive)
+═══════════════════════════════════════════════════════ */
+#player-screen{position:fixed;inset:0;z-index:500;display:none;flex-direction:column;padding:0;}
+#player-screen.open{display:flex;animation:player-rise 0.4s cubic-bezier(0.16,1,0.3,1);}
+@keyframes player-rise{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:none;}}
+
+.player-bg{position:absolute;inset:0;z-index:0;transition:background 1s ease;}
+.player-noise{position:absolute;inset:0;z-index:1;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:0.4;pointer-events:none;}
+
+.player-inner{position:relative;z-index:2;display:flex;flex-direction:column;height:100%;padding:env(safe-area-inset-top,20px) 1.5rem 0;}
+
+.player-top{display:flex;align-items:center;justify-content:space-between;padding:1rem 0 0.5rem;}
+.player-close{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text2);transition:background 0.15s;}
+.player-close:hover{background:rgba(255,255,255,0.15);}
+.player-session-name{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text2);}
+.player-phase-ind{font-size:0.72rem;color:var(--text3);background:rgba(255,255,255,0.06);padding:4px 12px;border-radius:20px;}
+
+/* Breathing orb */
+.player-orb-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem 0;}
+.orb-outer{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:2rem;}
+.orb-ring-1,.orb-ring-2,.orb-ring-3{position:absolute;border-radius:50%;border:1px solid;opacity:0;animation:ring-pulse 4s ease-in-out infinite;}
+.orb-ring-1{width:180px;height:180px;animation-delay:0s;}
+.orb-ring-2{width:220px;height:220px;animation-delay:1.3s;}
+.orb-ring-3{width:260px;height:260px;animation-delay:2.6s;}
+@keyframes ring-pulse{0%{opacity:0;transform:scale(0.92);}40%{opacity:0.4;}100%{opacity:0;transform:scale(1.06);}}
+
+.orb-core{width:140px;height:140px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:box-shadow 1s ease;}
+.orb-core-inner{position:absolute;inset:0;border-radius:50%;transition:background 1s ease,box-shadow 1s ease;}
+.orb-symbol{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:300;color:rgba(255,255,255,0.9);position:relative;z-index:1;text-shadow:0 2px 12px rgba(0,0,0,0.4);}
+.orb-breathing{position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);}
+
+.state-playing .orb-core-inner{animation:orb-meditate 4s ease-in-out infinite;}
+@keyframes orb-meditate{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+
+.breath-guide{text-align:center;margin-bottom:1rem;min-height:32px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bg-action{font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;color:rgba(255,255,255,0.8);letter-spacing:0.04em;}
+.bg-sub{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+
+.player-phrase{background:rgba(0,0,0,0.25);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1rem;backdrop-filter:blur(8px);max-height:130px;overflow-y:auto;border:1px solid rgba(255,255,255,0.06);scrollbar-width:none;}
+.player-phrase::-webkit-scrollbar{display:none;}
+.pp-text{font-family:'Playfair Display',serif;font-style:italic;font-size:0.95rem;line-height:2;color:rgba(255,255,255,0.75);transition:opacity 0.5s;}
+
+/* Timer ring */
+.player-timer{display:flex;flex-direction:column;align-items:center;gap:0.5rem;margin-bottom:1.25rem;}
+.ptimer-ring{position:relative;width:88px;height:88px;}
+.ptimer-ring svg{transform:rotate(-90deg);}
+.ptimer-track{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:3;}
+.ptimer-prog{fill:none;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke 1s ease;}
+.ptimer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ptimer-time{font-size:1rem;font-weight:300;letter-spacing:0.02em;}
+.ptimer-lbl{font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+
+/* Step dots */
+.player-steps{display:flex;gap:6px;justify-content:center;margin-bottom:1rem;}
+.ps-dot{height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,0.12);transition:background 0.5s;max-width:60px;}
+.ps-dot.done{background:rgba(255,255,255,0.4);}
+.ps-dot.current{background:var(--sage);}
+
+.player-controls{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:0 0 calc(env(safe-area-inset-bottom,0px) + 1.5rem);}
+.pc-prev,.pc-next{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text2);transition:all 0.15s;}
+.pc-prev:hover,.pc-next:hover{background:rgba(255,255,255,0.14);}
+.pc-main{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:all 0.2s;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.pc-main:hover{transform:scale(1.05);}
+.pc-phase-label{text-align:center;margin-bottom:0.5rem;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+
+/* ═══════════════════════════════════════════════════════
+   DISTRACTION PANEL (slides up during player)
+═══════════════════════════════════════════════════════ */
+#distraction-panel{
+  position:fixed;inset:0;z-index:600;
+  display:none;flex-direction:column;align-items:stretch;justify-content:flex-end;
+  background:rgba(0,0,0,0);
+  transition:background 0.35s;
+}
+#distraction-panel.open{display:flex;}
+#distraction-panel.open .dp-backdrop{background:rgba(0,0,0,0.55);}
+
+.dp-backdrop{position:absolute;inset:0;transition:background 0.35s;}
+.dp-sheet{
+  position:relative;z-index:1;
+  background:var(--bg2);
+  border-top:1px solid var(--border2);
+  border-radius:24px 24px 0 0;
+  padding:1.5rem 1.5rem calc(env(safe-area-inset-bottom,0px) + 2rem);
+  animation:sheet-rise 0.35s cubic-bezier(0.16,1,0.3,1);
+  max-height:80vh;overflow-y:auto;
+}
+@keyframes sheet-rise{from{transform:translateY(100%);}to{transform:none;}}
+
+.dp-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 1.5rem;}
+.dp-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:400;margin-bottom:0.4rem;color:var(--text);}
+.dp-sub{font-size:0.78rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.6;}
+
+.dp-response{
+  background:var(--surface);border-radius:var(--r);
+  padding:1rem 1.1rem;margin-bottom:1.25rem;
+  border-left:2px solid var(--sage);
+}
+.dp-response-text{font-family:'Playfair Display',serif;font-style:italic;font-size:0.92rem;color:var(--text2);line-height:2;margin-bottom:0.5rem;}
+.dp-response-attr{font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);}
+
+.dp-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
+.dp-opt{
+  background:var(--surface);border-radius:var(--r);
+  padding:0.85rem 0.75rem;border:1px solid var(--border);
+  text-align:center;cursor:pointer;transition:all 0.15s;
+}
+.dp-opt:hover{border-color:var(--border2);background:var(--surface2);}
+.dp-opt-ico{font-size:1.2rem;margin-bottom:5px;}
+.dp-opt-lbl{font-size:0.72rem;color:var(--text2);font-weight:700;}
+.dp-opt-desc{font-size:0.65rem;color:var(--text3);margin-top:2px;line-height:1.4;}
+.dp-opt.selected{border-color:var(--sage);background:var(--sage-bg);}
+
+.dp-return{width:100%;padding:13px;border-radius:var(--r);background:var(--sage);color:#0D1410;font-weight:700;font-size:0.88rem;letter-spacing:0.04em;transition:all 0.2s;box-shadow:0 4px 20px var(--sage-glow);}
+.dp-return:hover{opacity:0.9;}
+
+/* ═══════════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════════ */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);border-radius:50px;padding:10px 24px;font-size:0.82rem;opacity:0;transition:opacity 0.3s;z-index:9999;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Bhavana Practice Companion</h1>
-    <p class="muted">Sitting then walking guidance, with long silence and gentle reminders.</p>
 
-    <section class="card">
-      <h2>Session</h2>
-      <div class="row">
-        <label for="sessionType">Type</label>
-        <select id="sessionType">
-          <option value="sitting">Sitting</option>
-          <option value="walking">Walking</option>
-          <option value="combo">Sitting then Walking</option>
-        </select>
+<div class="ambient">
+  <div class="amb-orb amb-1"></div>
+  <div class="amb-orb amb-2"></div>
+  <div class="amb-orb amb-3"></div>
+</div>
 
-        <label for="sessionMins">Length</label>
-        <select id="sessionMins">
-          <option value="10">10 min</option>
-          <option value="20" selected>20 min</option>
-          <option value="30">30 min</option>
-        </select>
-      </div>
+<div id="app">
 
-      <div class="row">
-        <button onclick="beginSession()">Begin</button>
-        <button class="secondary" onclick="togglePause()">Pause/Resume</button>
-        <button class="secondary" onclick="resetSession()">Reset</button>
-      </div>
-      <div id="timerDisplay" class="timer">00:00</div>
-      <div id="status" class="muted">Ready.</div>
-    </section>
+<!-- ══════════════════════════════════
+     ONBOARDING
+══════════════════════════════════ -->
+<div id="onboard">
+  <div class="ob-logo">Bhāva<span>nā</span></div>
+  <div class="ob-subtitle">Practice Companion · Bhavana Society</div>
 
-    <section class="card">
-      <h2>Personal Preferences</h2>
-      <div class="row">
-        <label for="chimeCount">Opening chimes</label>
-        <select id="chimeCount">
-          <option value="1" selected>1 chime</option>
-          <option value="3">3 chimes</option>
-        </select>
-        <label for="reminderMins">Voice reminder every</label>
-        <select id="reminderMins">
-          <option value="0">No reminders</option>
-          <option value="3">3 min</option>
-          <option value="5" selected>5 min</option>
-          <option value="10">10 min</option>
-        </select>
-        <label><input id="closingVerse" type="checkbox" checked /> Closing verse</label>
-      </div>
-      <div class="row">
-        <label for="bellVolume">Bell volume</label><input id="bellVolume" type="range" min="0" max="100" value="48" />
-        <label for="voiceVolume">Voice volume</label><input id="voiceVolume" type="range" min="0" max="100" value="80" />
-        <label for="silencePad">Silence padding (s)</label><input id="silencePad" type="number" min="0" max="20" value="4" />
-      </div>
-      <div class="row">
-        <button class="secondary" onclick="savePrefs()">Save preferences</button>
-        <button class="secondary" onclick="window.location.href='./audio-pack.zip'">Download audio pack</button>
-      </div>
-    </section>
+  <div class="ob-orb">
+    <div class="ob-orb-ring"></div>
+    <div class="ob-orb-ring"></div>
+    <div class="ob-orb-ring"></div>
+    <div class="ob-orb-core"></div>
   </div>
 
-  <script>
-    const PREF_KEY = "bhavana_prefs_v1";
-    const audioBase = "./audio/";
-    const scripts = {
-      sitting: ["sitting_intro_01.mp3","sitting_intro_02.mp3","sitting_intro_03.mp3","sitting_intro_04.mp3","sitting_intro_05.mp3","sitting_intro_06.mp3"],
-      walking: ["walking_intro_01.mp3","walking_intro_02.mp3","walking_intro_03.mp3","walking_intro_04.mp3","walking_intro_05.mp3","walking_intro_06.mp3"]
-    };
+  <div class="ob-quote">"Whatever you frequently think and ponder upon, that will become the inclination of your mind."</div>
+  <div class="ob-attr">Majjhima Nikāya · Bhavana Society Tradition</div>
 
-    let ctx = null;
-    let timerId = null;
-    let seconds = 0;
-    let running = false;
-    let reminderId = null;
+  <div class="ob-types">
+    <div class="ob-chip" style="border-color:rgba(107,173,138,0.4);color:var(--sage);">Sitting</div>
+    <div class="ob-chip" style="border-color:rgba(200,148,60,0.4);color:var(--amber);">Walking</div>
+    <div class="ob-chip" style="border-color:rgba(176,96,96,0.4);color:var(--clay);">Sitting + Walking</div>
+  </div>
 
-    function getPrefs() {
-      const raw = localStorage.getItem(PREF_KEY);
-      if (!raw) return { chimeCount: 1, reminderMins: 5, bellVolume: 48, voiceVolume: 80, silencePad: 4, closingVerse: true };
-      return JSON.parse(raw);
+  <button class="ob-btn" onclick="enterApp()">Begin Practice</button>
+  <div class="ob-note">FREE · NO SIGNUP · BHAVANA SOCIETY TRADITION</div>
+</div>
+
+<!-- ══════════════════════════════════
+     MAIN
+══════════════════════════════════ -->
+<div id="main">
+  <div class="top-bar">
+    <div class="tb-logo">Bhāva<span>nā</span></div>
+    <div class="tb-streak">
+      <span>🌿</span>
+      <span id="streak-disp">0 days</span>
+    </div>
+  </div>
+
+  <!-- ── HOME ── -->
+  <div id="s-home" class="screen active">
+    <div class="home-hero">
+      <div class="hh-inner">
+        <div class="hh-greeting" id="hh-greet">GOOD MORNING</div>
+        <div class="hh-title">Begin your<br><span id="hh-practice" style="color:var(--sage)">Sitting</span> practice</div>
+        <div class="hh-desc" id="hh-desc">Settle the body, quiet the mind, and let the practice unfold with patience.</div>
+        <button class="hh-cta" onclick="openPlayer('combo')">▶ &nbsp;Start 30-min session</button>
+      </div>
+    </div>
+
+    <div class="sec-label">Choose a session</div>
+    <div class="session-cards">
+
+      <div class="sess-card" onclick="openPlayer('sitting')">
+        <div class="sess-orb" style="background:var(--sage-bg);">
+          <div class="sess-orb-glow" style="background:radial-gradient(circle,var(--sage-glow),transparent);"></div>
+          <span style="color:var(--sage);">🪷</span>
+        </div>
+        <div class="sess-info">
+          <div class="sess-name" style="color:var(--sage);">Sitting Meditation</div>
+          <div class="sess-desc">Breath awareness · Body settling · Mindfulness</div>
+          <div class="sess-meta">
+            <div class="sess-dur">20 min</div>
+            <div class="sess-dur">Guided intro + silence</div>
+          </div>
+        </div>
+        <div class="sess-play">▶</div>
+      </div>
+
+      <div class="sess-card" onclick="openPlayer('walking')">
+        <div class="sess-orb" style="background:var(--amber-bg);">
+          <div class="sess-orb-glow" style="background:radial-gradient(circle,var(--amber-glow),transparent);"></div>
+          <span style="color:var(--amber);">🚶</span>
+        </div>
+        <div class="sess-info">
+          <div class="sess-name" style="color:var(--amber);">Walking Meditation</div>
+          <div class="sess-desc">Mindful steps · Present moment · Body awareness</div>
+          <div class="sess-meta">
+            <div class="sess-dur">20 min</div>
+            <div class="sess-dur">Slow, deliberate steps</div>
+          </div>
+        </div>
+        <div class="sess-play">▶</div>
+      </div>
+
+      <div class="sess-card" onclick="openPlayer('combo')">
+        <div class="sess-orb" style="background:var(--clay-bg);">
+          <div class="sess-orb-glow" style="background:radial-gradient(circle,var(--clay-glow),transparent);"></div>
+          <span style="color:var(--clay);">🧘</span>
+        </div>
+        <div class="sess-info">
+          <div class="sess-name" style="color:var(--clay);">Sitting then Walking</div>
+          <div class="sess-desc">Full practice · Stillness into movement</div>
+          <div class="sess-meta">
+            <div class="sess-dur">30 min</div>
+            <div class="sess-dur">Bhavana Society style</div>
+          </div>
+        </div>
+        <div class="sess-play">▶</div>
+      </div>
+
+    </div>
+
+    <div class="closing" style="margin-top:1.5rem;">
+      <div class="cl-text">May all beings be happy and secure.<br>May all beings have happy minds.</div>
+      <div class="cl-attr">Bhavana Society Closing Verse</div>
+    </div>
+  </div>
+
+  <!-- ── GUIDANCE ── -->
+  <div id="s-guide" class="screen">
+
+    <div class="guide-hero" style="background:var(--sage-bg);">
+      <div class="guide-hero-glow" style="background:var(--sage);"></div>
+      <div class="gh-title" style="color:var(--sage);">Practice Guidance</div>
+      <div class="gh-sub">Understanding what arises in meditation — and how to meet it.</div>
+    </div>
+
+    <div class="guide-section">
+      <div class="gs-head">Working with distractions</div>
+
+      <div class="guide-card">
+        <div class="gc-title" style="color:var(--sage);">Thoughts &amp; mind-wandering</div>
+        <div class="gc-body">The mind wanders — this is its nature. Noticing the wandering is itself awareness. You have not failed; you have awakened.</div>
+        <div class="gc-phrase">"Gently, without scolding the mind, return your attention to the breath. Returning is the practice."</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="gc-title" style="color:var(--amber);">Physical discomfort</div>
+        <div class="gc-body">Bring a curious, gentle attention to the sensation. Notice where it is, its quality, whether it changes. If it is simply posture, adjust slowly and mindfully.</div>
+        <div class="gc-phrase">"The body is impermanent. Observe the sensation with equanimity, as you would a cloud passing."</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="gc-title" style="color:var(--clay);">Drowsiness &amp; dullness</div>
+        <div class="gc-body">Open the eyes slightly. Lift the gaze. Take a few slightly deeper breaths. You can also try standing for a few moments or doing a short walking practice.</div>
+        <div class="gc-phrase">"Apply energy — the quality of effort — to the practice. Not forcing, but a gentle brightening of attention."</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="gc-title" style="color:var(--slate);">Restlessness &amp; agitation</div>
+        <div class="gc-body">Rather than fighting the restlessness, let it be the object. Observe it in the body — where does it live? Is it hot or cool? Tense or scattered? Naming it can loosen its grip.</div>
+        <div class="gc-phrase">"Restlessness, I see you. Return to the breath. Return to the body. Return to this moment."</div>
+      </div>
+
+    </div>
+
+    <div class="bq-box">
+      <div class="bq-text">"There will be times when the meditation is difficult — when the mind will not settle and nothing seems to work. This is normal, not a failure. Continue, humbly and patiently, and the clarity will come."</div>
+      <div class="bq-attr">Bhante Gunaratana · Bhavana Society</div>
+    </div>
+
+    <div class="guide-section">
+      <div class="gs-head">The five hindrances &amp; their antidotes</div>
+
+      <div class="guide-card">
+        <div class="gc-title" style="color:var(--amber);">Sensual desire</div>
+        <div class="gc-body">Contemplating impermanence is the classical antidote. Notice the craving as a passing mental event.</div>
+      </div>
+      <div class="guide-card">
+        <div class="gc-title" style="color:var(--clay);">Ill-will</div>
+        <div class="gc-body">Turn to mettā — loving-friendliness. Wish the person or situation well, and release the grip.</div>
+      </div>
+      <div class="guide-card">
+        <div class="gc-title" style="color:var(--slate);">Sloth-torpor</div>
+        <div class="gc-body">Energize the mind — open the eyes, straighten the posture, breathe deeply, or walk.</div>
+      </div>
+      <div class="guide-card">
+        <div class="gc-title" style="color:var(--sage);">Restlessness-worry</div>
+        <div class="gc-body">Settle by anchoring firmly in the breath. Trust the process. The mind will eventually calm.</div>
+      </div>
+      <div class="guide-card">
+        <div class="gc-title">Doubt</div>
+        <div class="gc-body">Return to what you know from direct experience. Doubt itself is just another mental event — notice it, and continue.</div>
+      </div>
+    </div>
+
+    <div class="closing">
+      <div class="cl-text">With patience and gentleness,<br>the mind learns to settle.</div>
+      <div class="cl-attr">Bhavana Society · West Virginia</div>
+    </div>
+  </div>
+
+  <!-- ── JOURNAL ── -->
+  <div id="s-journal" class="screen">
+    <div class="streak-card">
+      <div class="sc-inner">
+        <div class="sc-num" id="sc-num">0</div>
+        <div class="sc-lbl">DAY STREAK</div>
+      </div>
+      <div class="sc-wk" id="sc-wk"></div>
+    </div>
+
+    <div class="sec-label">Mark today's practice</div>
+    <div class="today-tiles">
+      <div class="tt" id="tt-sitting" onclick="toggleTT('sitting')" style="border-color:rgba(107,173,138,0.2);">
+        <div class="tt-ck" id="ttc-sitting" style="color:var(--sage);">○</div>
+        <div class="tt-name" style="color:var(--sage);">Sitting</div>
+        <div class="tt-sub">Breath awareness</div>
+      </div>
+      <div class="tt" id="tt-walking" onclick="toggleTT('walking')" style="border-color:rgba(200,148,60,0.2);">
+        <div class="tt-ck" id="ttc-walking" style="color:var(--amber);">○</div>
+        <div class="tt-name" style="color:var(--amber);">Walking</div>
+        <div class="tt-sub">Mindful steps</div>
+      </div>
+    </div>
+    <div id="tt-msg" style="text-align:center;min-height:22px;font-family:'Playfair Display',serif;font-style:italic;font-size:0.88rem;color:var(--text2);margin-bottom:1.25rem;"></div>
+
+    <div class="sec-label">Daily reflection</div>
+    <div class="reflect-cards">
+      <div class="rc">
+        <div class="rc-q" style="color:var(--sage);">How did the mind settle today?</div>
+        <textarea class="rc-ta" id="r-settle" placeholder="Easily, with effort, barely — all are valid..."></textarea>
+      </div>
+      <div class="rc">
+        <div class="rc-q" style="color:var(--amber);">What arose that was difficult?</div>
+        <textarea class="rc-ta" id="r-difficult" placeholder="A distraction, a mood, a resistance..."></textarea>
+      </div>
+      <div class="rc">
+        <div class="rc-q" style="color:var(--clay);">What did you notice about the body?</div>
+        <textarea class="rc-ta" id="r-body" placeholder="Tension, ease, restlessness, stillness..."></textarea>
+      </div>
+      <div class="rc">
+        <div class="rc-q" style="color:var(--slate);">One thing to carry forward</div>
+        <textarea class="rc-ta" id="r-forward" placeholder="An intention, an insight, a phrase..."></textarea>
+      </div>
+    </div>
+    <button class="save-refl" onclick="saveRefl()">Save today's reflection</button>
+
+    <div class="closing">
+      <div class="cl-text">May all beings be happy and secure.<br>May all beings have happy minds.<br>May all beings be free from suffering.<br>May all beings quickly obtain liberation.</div>
+      <div class="cl-attr">Bhavana Society Closing Verse · Bhante G</div>
+    </div>
+  </div>
+
+  <nav class="bnav">
+    <button class="bn-item active" id="bn-home" onclick="sw('home')"><div class="bn-ico">⌂</div><div class="bn-lbl">Home</div></button>
+    <button class="bn-item" id="bn-guide" onclick="sw('guide')"><div class="bn-ico">◈</div><div class="bn-lbl">Guidance</div></button>
+    <button class="bn-item" id="bn-journal" onclick="sw('journal')"><div class="bn-ico">◇</div><div class="bn-lbl">Journal</div></button>
+  </nav>
+</div>
+
+<!-- ══════════════════════════════════
+     PLAYER
+══════════════════════════════════ -->
+<div id="player-screen">
+  <div class="player-bg" id="pl-bg"></div>
+  <div class="player-noise"></div>
+  <div class="player-inner">
+
+    <div class="player-top">
+      <button class="player-close" onclick="closePlayer()">✕</button>
+      <div class="player-session-name" id="pl-session-name">SITTING</div>
+      <div class="player-phase-ind" id="pl-phase-ind">1 / 3</div>
+    </div>
+
+    <div class="player-orb-wrap">
+      <div class="orb-outer">
+        <div class="orb-ring-1" id="orb-r1"></div>
+        <div class="orb-ring-2" id="orb-r2"></div>
+        <div class="orb-ring-3" id="orb-r3"></div>
+        <div class="orb-core state-playing" id="orb-core">
+          <div class="orb-core-inner" id="orb-inner"></div>
+          <div class="orb-breathing" id="orb-breath"></div>
+          <div class="orb-symbol" id="orb-sym">◎</div>
+        </div>
+      </div>
+
+      <div class="breath-guide">
+        <div class="bg-action" id="bg-action">Breathe naturally</div>
+        <div class="bg-sub" id="bg-sub">settle in</div>
+      </div>
+
+      <div class="player-phrase">
+        <div class="pp-text" id="pl-phrase">Find a comfortable seat. Let the body settle. The practice begins here.</div>
+      </div>
+
+      <div class="player-timer">
+        <div class="ptimer-ring">
+          <svg width="88" height="88" viewBox="0 0 88 88">
+            <circle class="ptimer-track" cx="44" cy="44" r="38"/>
+            <circle class="ptimer-prog" id="pt-prog" cx="44" cy="44" r="38" stroke="var(--sage)" stroke-dasharray="239" stroke-dashoffset="0"/>
+          </svg>
+          <div class="ptimer-center">
+            <div class="ptimer-time" id="pt-time">—:——</div>
+            <div class="ptimer-lbl" id="pt-lbl">PHASE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="player-steps" id="pl-steps"></div>
+    <div class="pc-phase-label" id="pc-phase-lbl">SETTLING</div>
+
+    <div class="player-controls">
+      <button class="pc-prev" onclick="prevPhase()">⏮</button>
+      <button class="pc-main" id="pc-main-btn" onclick="togglePlay()">▶</button>
+      <button class="pc-next" onclick="nextPhase()">⏭</button>
+    </div>
+
+    <!-- Controls row -->
+    <div style="display:flex;gap:8px;justify-content:center;padding-bottom:0.5rem;">
+      <button id="audio-voice-btn" onclick="toggleVoice()"
+        style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:50px;padding:6px 14px;font-size:0.68rem;color:rgba(255,255,255,0.5);letter-spacing:0.06em;cursor:pointer;">
+        🗣 Voice: On
+      </button>
+      <button onclick="openDistractionPanel()"
+        style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:50px;padding:6px 14px;font-size:0.68rem;color:rgba(255,255,255,0.5);letter-spacing:0.06em;cursor:pointer;">
+        ✦ Mind wandering?
+      </button>
+    </div>
+
+    <div style="text-align:center;padding:0.5rem 0 calc(env(safe-area-inset-bottom,0px) + 1rem);">
+      <a href="https://dharmaseed.org/teacher/410/" target="_blank"
+        style="font-size:0.65rem;color:rgba(255,255,255,0.25);letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:1px;">
+        Bhante G recordings on Dharma Seed ›
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     DISTRACTION PANEL
+══════════════════════════════════ -->
+<div id="distraction-panel">
+  <div class="dp-backdrop" onclick="closeDistractionPanel()"></div>
+  <div class="dp-sheet">
+    <div class="dp-handle"></div>
+    <div class="dp-title">The mind has wandered.</div>
+    <div class="dp-sub">This is not a failure — it is the moment of awareness. Noticing is the practice.<br>Choose what is arising, and receive gentle guidance.</div>
+
+    <div class="dp-options" id="dp-options">
+      <div class="dp-opt" onclick="selectDistraction('thoughts')">
+        <div class="dp-opt-ico">💭</div>
+        <div class="dp-opt-lbl">Thoughts</div>
+        <div class="dp-opt-desc">Planning, memories, stories</div>
+      </div>
+      <div class="dp-opt" onclick="selectDistraction('discomfort')">
+        <div class="dp-opt-ico">🔥</div>
+        <div class="dp-opt-lbl">Discomfort</div>
+        <div class="dp-opt-desc">Pain, tension, itching</div>
+      </div>
+      <div class="dp-opt" onclick="selectDistraction('drowsy')">
+        <div class="dp-opt-ico">🌫</div>
+        <div class="dp-opt-lbl">Drowsiness</div>
+        <div class="dp-opt-desc">Dull, heavy, sleepy</div>
+      </div>
+      <div class="dp-opt" onclick="selectDistraction('restless')">
+        <div class="dp-opt-ico">⚡</div>
+        <div class="dp-opt-lbl">Restlessness</div>
+        <div class="dp-opt-desc">Agitated, urgent, scattered</div>
+      </div>
+      <div class="dp-opt" onclick="selectDistraction('doubt')">
+        <div class="dp-opt-ico">🌀</div>
+        <div class="dp-opt-lbl">Doubt</div>
+        <div class="dp-opt-desc">"Is this working? Am I doing it right?"</div>
+      </div>
+      <div class="dp-opt" onclick="selectDistraction('emotion')">
+        <div class="dp-opt-ico">🌊</div>
+        <div class="dp-opt-lbl">Emotion</div>
+        <div class="dp-opt-desc">Sadness, worry, anger, grief</div>
+      </div>
+    </div>
+
+    <div id="dp-response-wrap" style="display:none;">
+      <div class="dp-response" id="dp-response-card">
+        <div class="dp-response-text" id="dp-response-text"></div>
+        <div class="dp-response-attr" id="dp-response-attr"></div>
+      </div>
+    </div>
+
+    <button class="dp-return" onclick="returnToPractice()">Return to Practice</button>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════
+// DATA — Session phases
+// ════════════════════════════════════════
+var PHASES = {
+  settle: {
+    id:'settle', label:'Settling', color:'#6BAD8A', dark:'#3D7A5A', rgb:'107,173,138',
+    sym:'◎', bg:'#0D1A12', action:'Breathe naturally', sub:'settle in',
+    mins:3,
+    phrase:'Find a comfortable upright seat. Let the body settle. Take three slow natural breaths. You are arriving.',
+    guided:[
+      {text:'Find a comfortable upright seat.', pause:5, filename:'sitting_intro_01.mp3'},
+      {text:'Let the spine be naturally tall — not rigid, but gently lifted.', pause:6, filename:'sitting_intro_02.mp3'},
+      {text:'Rest the hands gently in your lap.', pause:5, filename:'sitting_intro_03.mp3'},
+      {text:'Close the eyes softly, or lower the gaze toward the floor.', pause:6, filename:'sitting_intro_04.mp3'},
+      {text:'Take one slow, natural breath. Not controlling it — simply noticing.', pause:8, filename:'sitting_intro_05.mp3'},
+      {text:'Take another breath. Feel the body soften slightly.', pause:7, filename:'sitting_intro_06.mp3'},
+      {text:'And one more. Let the shoulders drop. Let the jaw release.', pause:8},
+      {text:'You are arriving. There is nowhere else to be.', pause:10},
+      {text:'Silently, set your intention for this practice.', pause:6},
+      {text:'May this sitting be of benefit — to myself and to all beings.', pause:12},
+    ]
+  },
+  sitting: {
+    id:'sitting', label:'Sitting', color:'#6BAD8A', dark:'#3D7A5A', rgb:'107,173,138',
+    sym:'🪷', bg:'#0D1A12', action:'Breathe in', sub:'return to this',
+    mins:20,
+    phrase:'Rest the attention lightly on the breath. When the mind wanders, gently return — without judgment, without struggle.',
+    guided:[
+      {text:'Bring the attention to the breath.', pause:6, filename:'sitting_intro_01.mp3'},
+      {text:'Not the idea of the breath — the actual, physical sensation.', pause:7, filename:'sitting_intro_02.mp3'},
+      {text:'The coolness at the nostrils as you breathe in.', pause:6, filename:'sitting_intro_03.mp3'},
+      {text:'The warmth as you breathe out.', pause:7, filename:'sitting_intro_04.mp3'},
+      {text:'Or the gentle rise and fall of the abdomen.', pause:7, filename:'sitting_intro_05.mp3'},
+      {text:'Choose one place, and rest the attention there.', pause:8, filename:'sitting_intro_06.mp3'},
+      {text:'The mind will wander. This is its nature.', pause:6},
+      {text:'When it does — and you notice — simply return.', pause:7},
+      {text:'Without frustration. Without self-criticism.', pause:7},
+      {text:'Returning is the practice.', pause:10},
+      {text:'Breath by breath.', pause:8},
+      {text:'Moment by moment.', pause:15},
+    ]
+  },
+  walking_intro: {
+    id:'walking_intro', label:'Walking', color:'#C8943C', dark:'#8A6020', rgb:'200,148,60',
+    sym:'🚶', bg:'#1A1200', action:'Step by step', sub:'present and clear',
+    mins:2,
+    phrase:'Stand at one end of your path. Feel the weight of the body. The practice begins with the first step.',
+    guided:[
+      {text:'Come to standing. Take a moment to feel the weight of the body.', pause:6, filename:'walking_intro_01.mp3'},
+      {text:'Feel the contact of the feet with the ground.', pause:7, filename:'walking_intro_02.mp3'},
+      {text:'The floor beneath you is solid. You are supported.', pause:7, filename:'walking_intro_03.mp3'},
+      {text:'Walking meditation is not going somewhere — it is being somewhere.', pause:8, filename:'walking_intro_04.mp3'},
+      {text:'Each step is complete in itself.', pause:7, filename:'walking_intro_05.mp3'},
+      {text:'We will walk slowly. Much slower than normal.', pause:6, filename:'walking_intro_06.mp3'},
+      {text:'With each step, be aware of lifting, moving, placing.', pause:9},
+      {text:'Lifting the foot... moving it forward... placing it down.', pause:10},
+      {text:'Let the practice begin.', pause:6},
+    ]
+  },
+  walking: {
+    id:'walking', label:'Walking', color:'#C8943C', dark:'#8A6020', rgb:'200,148,60',
+    sym:'🚶', bg:'#1A1200', action:'Lifting · Moving · Placing', sub:'step by step',
+    mins:20,
+    phrase:'Lifting... moving... placing. With each step, the mind returns to this body, this moment, this ground beneath you.',
+    guided:[
+      {text:'Continue walking slowly.', pause:8, filename:'walking_intro_01.mp3'},
+      {text:'Lifting... moving... placing.', pause:10, filename:'walking_intro_02.mp3'},
+      {text:'When the mind wanders, gently bring it back to the feet.', pause:8, filename:'walking_intro_03.mp3'},
+      {text:'Back to the feeling of the ground.', pause:9, filename:'walking_intro_04.mp3'},
+      {text:'When you reach the end of your path, pause.', pause:7, filename:'walking_intro_05.mp3'},
+      {text:'Stand for a moment. Feel the stillness.', pause:8, filename:'walking_intro_06.mp3'},
+      {text:'Then turn slowly — and walk again.', pause:10},
+      {text:'The body knows how to do this.', pause:8},
+      {text:'Your task is simply to be present for it.', pause:12},
+    ]
+  },
+  close: {
+    id:'close', label:'Closing', color:'#6BAD8A', dark:'#3D7A5A', rgb:'107,173,138',
+    sym:'◎', bg:'#0D1A12', action:'Rest in stillness', sub:'returning',
+    mins:2,
+    phrase:'May all beings be happy and secure. May all beings have happy minds.',
+    guided:[
+      {text:'We close our practice with the Bhavana Society closing verse.', pause:5},
+      {text:'May all beings be happy and secure.', pause:8},
+      {text:'May all beings have happy minds.', pause:8},
+      {text:'May all beings be free from suffering.', pause:8},
+      {text:'May all beings quickly obtain liberation.', pause:10},
+      {text:'Sit quietly for a moment. Notice the quality of the mind.', pause:7},
+      {text:'Perhaps softer. Perhaps quieter.', pause:7},
+      {text:'Whatever is here — it is the fruit of sincere effort.', pause:8},
+      {text:'Take one slow breath.', pause:6},
+      {text:'And when you are ready, gently open the eyes.', pause:8},
+      {text:'Carry whatever stillness you have found here into the rest of your day.', pause:8, filename:'closing_01.mp3'},
+    ]
+  }
+};
+
+var SESSIONS = {
+  sitting: ['settle','sitting','close'],
+  walking: ['settle','walking_intro','walking','close'],
+  combo:   ['settle','sitting','walking_intro','walking','close']
+};
+
+// ════════════════════════════════════════
+// DISTRACTION RESPONSES — Bhavana-rooted
+// ════════════════════════════════════════
+var DISTRACTION = {
+  thoughts: {
+    borderColor: 'var(--sage)',
+    attr: 'Bhante Gunaratana · Bhavana Society',
+    responses: [
+      'The mind wandered — and now it has returned. This is exactly the practice. Without the wandering, there is nothing to return from. Gently, without scolding, bring the attention back to the breath. The breath is always here, always patient.',
+      'Thoughts are like clouds moving through the sky — the sky does not chase them. You are the sky. Let the thought be seen, noted simply as "thinking," and release it. Return to the breath.',
+      'Notice that you noticed. That noticing is awareness itself — pure, clear, unconditioned. From that awareness, let the breath be the anchor. One breath at a time. This moment. This breath.'
+    ]
+  },
+  discomfort: {
+    borderColor: 'var(--amber)',
+    attr: 'Theravāda Tradition · Bhavana Society',
+    responses: [
+      'Before moving, bring a gentle curiosity to the sensation. Where is it exactly? What is its quality — sharp, dull, spreading, throbbing? Does it change as you observe it? Often the direct attention of mindfulness itself is enough to soften discomfort. If the sensation is calling for a simple postural adjustment, move slowly and deliberately — without losing awareness.',
+      'The body holds tension we carry unconsciously. Meet this discomfort as a teacher. Breathe into the area with kindness. If it is simply the protest of an unused muscle, let equanimity hold it — knowing it will pass. If it is genuine pain, attend to the body with the same compassion you would offer a dear friend.',
+      'Offer the discomfort the quality of karuṇā — compassion. The body is impermanent, these sensations are impermanent. You need not fight them, nor be ruled by them. Simply observe, with a steady and open attention, what is here.'
+    ]
+  },
+  drowsy: {
+    borderColor: 'var(--amber)',
+    attr: 'Bhante Gunaratana · Bhavana Society',
+    responses: [
+      'Drowsiness is one of the five hindrances — and like all of them, it responds to being seen clearly. Open the eyes slightly. Lift the gaze. Sit up a little taller and take a few slightly fuller breaths. You are brightening the quality of attention — not forcing, but kindling.',
+      'When the dullness is heavy, the walking practice is a gift. Even a few minutes of slow, deliberate walking can wake the mind and bring it into the present moment far more readily than sitting with heavy eyes. Consider transitioning to walking, then returning to the sitting.',
+      'Bring energy to the practice — the Pali word is vīriya, meaning effort or ardor. Not straining, but a gentle determination. Notice the texture of the drowsiness itself — is it heavy, foggy, warm? Curiosity itself is the antidote to dullness.'
+    ]
+  },
+  restless: {
+    borderColor: 'var(--clay)',
+    attr: 'Bhante Gunaratana · Bhavana Society',
+    responses: [
+      'Do not fight the restlessness — that is like trying to flatten water with your hands. Instead, let it be the object of meditation. Where does it live in the body? Is it in the chest? The jaw? The hands? Name it quietly: "restlessness, restlessness." The act of observing loosens its hold.',
+      'Restlessness often carries urgency — the feeling that something must be done right now. This urgency is also just a mental event. Let the breath become the anchor: long, slow, deliberate breaths. Let each exhale be a small release. You do not need to act on this urgency. It will pass.',
+      'Recall why you sat down. Not to achieve anything, not to be somewhere else — but to cultivate the steadiness of mind that makes everything else possible. Restlessness, I see you. Now return. Breath by breath.'
+    ]
+  },
+  doubt: {
+    borderColor: 'var(--slate)',
+    attr: 'Theravāda Tradition · Bhavana Society',
+    responses: [
+      'Doubt is the fifth hindrance — and it often arrives dressed as wisdom. "Is this working? Am I doing it right? Does this even matter?" Notice that this too is just a thought arising in the mind. You do not need to answer these questions right now. Return to what is directly known: the breath, the body, this moment.',
+      'Trust what you have already tasted from this practice — even the small moments of stillness, of returning, of noticing. Those are real. Doubt cannot take them away. Continue, humbly and without fanfare. The clarity comes not by forcing but by continuing.',
+      'Bhante Gunaratana teaches: the proof of the practice is not in the session, but in the quality of the life you lead between sessions. You are building something slowly. The doubt you feel is the resistance before the ground gives way. Simply sit. Simply practice.'
+    ]
+  },
+  emotion: {
+    borderColor: 'var(--clay)',
+    attr: 'Bhante Gunaratana · Bhavana Society',
+    responses: [
+      'When strong emotions arise in meditation, they are not obstacles — they are the practice itself. You are being shown what needs to be seen. Do not push the emotion away, and do not be swept into its story. Simply stay with the feeling as a physical sensation: where is it in the body? What is its quality? Breathe with it. Let it be seen.',
+      'Meet this emotion with mettā — loving-friendliness extended first to yourself. You are a human being, and you are feeling what human beings feel. This is not weakness. Whisper inwardly: "May I hold this with gentleness. May I hold this with courage. May I find relief and ease." Then return, slowly, to the breath.',
+      'The Bhavana Society teaches that the heart must be soft enough to feel and strong enough to hold what it feels. Allow the emotion its space — without elaborating the story around it, and without suppressing it. Just this feeling. Just this breath. Just this moment. You are safe here.'
+    ]
+  }
+};
+
+// ════════════════════════════════════════
+// AUDIO ENGINE
+// ════════════════════════════════════════
+var AUDIO_PATH    = './audio/';
+var audioCtx      = null;
+var voiceEnabled  = true;
+var currentAudio  = null;
+var guidedSegIdx  = 0;
+var guidedTimeout = null;
+var speakTimeout  = null;
+var timerRunning  = false;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playBowl(freq, duration, vol) {
+  try {
+    var ctx = getAudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    var o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+    o1.type = o2.type = 'sine';
+    o1.frequency.value = freq; o2.frequency.value = freq * 1.005;
+    o1.connect(g); o2.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(vol || 0.18, ctx.currentTime + 0.06);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (duration || 4));
+    o1.start(); o2.start();
+    o1.stop(ctx.currentTime + (duration || 4));
+    o2.stop(ctx.currentTime + (duration || 4));
+  } catch(e){}
+}
+
+function stopCurrentAudio() {
+  if (currentAudio) {
+    try { currentAudio.pause(); currentAudio.currentTime = 0; } catch(e){}
+    currentAudio = null;
+  }
+}
+
+// Voice synthesis fallback
+var _voice = null;
+function getVoice() {
+  if (_voice) return _voice;
+  var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  var pref = ['Daniel','Moira','Google UK English Male','Arthur','Alex','Samantha','Karen'];
+  for (var i = 0; i < pref.length; i++)
+    for (var j = 0; j < voices.length; j++)
+      if (voices[j].name.indexOf(pref[i]) >= 0) { _voice = voices[j]; return _voice; }
+  for (var k = 0; k < voices.length; k++)
+    if (voices[k].lang && voices[k].lang.indexOf('en') === 0) { _voice = voices[k]; return _voice; }
+  return voices[0] || null;
+}
+
+function speakFallback(text, onEnd) {
+  if (!window.speechSynthesis) { if (onEnd) onEnd(); return; }
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.65; u.pitch = 0.78; u.volume = 0.80;
+  var v = getVoice(); if (v) u.voice = v;
+  u.onend = u.onerror = function() { if (onEnd) onEnd(); };
+  window.speechSynthesis.speak(u);
+}
+
+function playSegment(seg, onEnd) {
+  if (!voiceEnabled) { if (onEnd) onEnd(); return; }
+  stopCurrentAudio();
+
+  if (seg.filename) {
+    var audio = new Audio(AUDIO_PATH + seg.filename);
+    audio.volume = 0.90;
+    audio.addEventListener('ended', function(){ currentAudio = null; if (onEnd) onEnd(); });
+    audio.addEventListener('error', function(){ currentAudio = null; speakFallback(seg.text, onEnd); });
+    var p = audio.play();
+    if (p !== undefined) {
+      p.then(function(){ currentAudio = audio; })
+       .catch(function(e){
+         currentAudio = null;
+         if (e.name === 'NotAllowedError') speakFallback(seg.text, onEnd);
+         else if (onEnd) onEnd();
+       });
+    } else {
+      currentAudio = audio;
     }
+  } else {
+    speakFallback(seg.text, onEnd);
+  }
+}
 
-    function savePrefs() {
-      const prefs = {
-        chimeCount: parseInt(document.getElementById("chimeCount").value, 10),
-        reminderMins: parseInt(document.getElementById("reminderMins").value, 10),
-        bellVolume: parseInt(document.getElementById("bellVolume").value, 10),
-        voiceVolume: parseInt(document.getElementById("voiceVolume").value, 10),
-        silencePad: parseInt(document.getElementById("silencePad").value, 10),
-        closingVerse: document.getElementById("closingVerse").checked
-      };
-      localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
-      setStatus("Preferences saved.");
-    }
+// Speak distraction response text using Web Speech (no MP3 needed)
+function speakDistractionResponse(text) {
+  if (!voiceEnabled || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.62; u.pitch = 0.78; u.volume = 0.75;
+  var v = getVoice(); if (v) u.voice = v;
+  window.speechSynthesis.speak(u);
+}
 
-    function loadPrefsUI() {
-      const p = getPrefs();
-      document.getElementById("chimeCount").value = String(p.chimeCount);
-      document.getElementById("reminderMins").value = String(p.reminderMins);
-      document.getElementById("bellVolume").value = String(p.bellVolume);
-      document.getElementById("voiceVolume").value = String(p.voiceVolume);
-      document.getElementById("silencePad").value = String(p.silencePad);
-      document.getElementById("closingVerse").checked = !!p.closingVerse;
-    }
+function stopSpeech() {
+  stopCurrentAudio();
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  if (guidedTimeout) { clearTimeout(guidedTimeout); guidedTimeout = null; }
+  if (speakTimeout)  { clearTimeout(speakTimeout);  speakTimeout  = null; }
+  guidedSegIdx = 0;
+}
 
-    function setStatus(msg) { document.getElementById("status").textContent = msg; }
-    function formatTime(sec) { return String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0"); }
-    function renderTimer() { document.getElementById("timerDisplay").textContent = formatTime(seconds); }
-
-    async function playAudioFile(filename) {
-      const prefs = getPrefs();
-      const audio = new Audio(audioBase + filename);
-      audio.volume = prefs.voiceVolume / 100;
-      try { await audio.play(); } catch (_) {}
-      await new Promise((resolve) => { audio.onended = resolve; audio.onerror = resolve; });
-      await new Promise((resolve) => setTimeout(resolve, prefs.silencePad * 1000));
-    }
-
-    function ensureCtx() {
-      if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-      if (ctx.state === "suspended") ctx.resume().catch(() => {});
-    }
-
-    function playChimeAt(t0, isEnd) {
-      const prefs = getPrefs();
-      const master = ((prefs.bellVolume / 100) * (isEnd ? 0.35 : 0.2));
-      const partials = isEnd
-        ? [{f:392,d:6.2,w:1},{f:784,d:4.6,w:0.32},{f:1176,d:3.1,w:0.1}]
-        : [{f:392,d:2.6,w:1},{f:784,d:1.8,w:0.28},{f:1176,d:1.2,w:0.08}];
-      partials.forEach((p) => {
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.type = "sine";
-        o.frequency.setValueAtTime(p.f, t0);
-        g.gain.setValueAtTime(0.0001, t0);
-        g.gain.exponentialRampToValueAtTime(Math.max(0.002, master * p.w), t0 + 0.02);
-        g.gain.exponentialRampToValueAtTime(0.0001, t0 + p.d);
-        o.connect(g); g.connect(ctx.destination); o.start(t0); o.stop(t0 + p.d + 0.05);
+function runGuidedScript(segments) {
+  guidedSegIdx = 0;
+  function nextSeg() {
+    if (!timerRunning) return;
+    if (guidedSegIdx >= segments.length) return;
+    var seg = segments[guidedSegIdx++];
+    var el = document.getElementById('pl-phrase');
+    if (el) el.textContent = seg.text;
+    setTimeout(function() {
+      playSegment(seg, function() {
+        if (!timerRunning) return;
+        guidedTimeout = setTimeout(nextSeg, (seg.pause || 6) * 1000);
       });
-    }
+    }, 200);
+  }
+  guidedTimeout = setTimeout(nextSeg, 2200);
+}
 
-    function playOpeningChimes() {
-      ensureCtx();
-      const prefs = getPrefs();
-      const now = ctx.currentTime;
-      const count = prefs.chimeCount === 3 ? 3 : 1;
-      for (let i = 0; i < count; i++) playChimeAt(now + i * 2.2, false);
-    }
+function startPhaseAudio(ph) {
+  stopSpeech();
+  if (!timerRunning) return;
+  var freqs = {settle:440, sitting:432, walking_intro:396, walking:396, close:440};
+  playBowl(freqs[ph.id] || 432, 5, 0.18);
+  if (ph.guided && voiceEnabled) {
+    speakTimeout = setTimeout(function() {
+      if (timerRunning) runGuidedScript(ph.guided);
+    }, 3000);
+  }
+}
 
-    function playClosingChime() { ensureCtx(); playChimeAt(ctx.currentTime, true); }
+function toggleVoice() {
+  voiceEnabled = !voiceEnabled;
+  var btn = document.getElementById('audio-voice-btn');
+  if (btn) btn.textContent = voiceEnabled ? '🗣 Voice: On' : '🔇 Voice: Off';
+  if (!voiceEnabled) stopSpeech();
+}
 
-    async function playIntro(type) {
-      const seq = type === "combo" ? [...scripts.sitting, ...scripts.walking] : scripts[type];
-      for (const file of seq) {
-        if (!running) return;
-        await playAudioFile(file);
+// ════════════════════════════════════════
+// PLAYER STATE
+// ════════════════════════════════════════
+var playerPhaseIds = [];
+var curPhaseIdx    = 0;
+var timerSecs      = 0;
+var timerTotal     = 1;
+var timerIv        = null;
+var breathId       = null;
+var streak         = 0;
+
+function stopTimers() {
+  clearInterval(timerIv); timerIv = null;
+  if (breathId) { clearTimeout(breathId); breathId = null; }
+  timerRunning = false;
+  stopSpeech();
+}
+
+function openPlayer(mode) {
+  stopTimers();
+  playerPhaseIds = (SESSIONS[mode] || SESSIONS.sitting).slice();
+  curPhaseIdx    = 0;
+  var labels = {sitting:'SITTING', walking:'WALKING', combo:'SITTING + WALKING'};
+  document.getElementById('pl-session-name').textContent = labels[mode] || 'PRACTICE';
+  document.getElementById('player-screen').classList.add('open');
+  buildStepDots();
+  loadPhase(0);
+  document.getElementById('pc-main-btn').textContent = '▶';
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    var d = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(d); window.speechSynthesis.cancel();
+  }
+}
+
+function closePlayer() {
+  stopTimers();
+  document.getElementById('player-screen').classList.remove('open');
+}
+
+function buildStepDots() {
+  var el = document.getElementById('pl-steps');
+  el.innerHTML = playerPhaseIds.map(function(_,i){
+    return '<div class="ps-dot' + (i===0?' current':'') + '" id="psd-'+i+'"></div>';
+  }).join('');
+}
+
+function loadPhase(idx) {
+  var ph = PHASES[playerPhaseIds[idx]];
+  if (!ph) return;
+  curPhaseIdx = idx;
+
+  playerPhaseIds.forEach(function(_,i){
+    var d = document.getElementById('psd-'+i);
+    if (d) d.className = 'ps-dot' + (i < idx ? ' done' : i===idx ? ' current' : '');
+  });
+
+  document.getElementById('pl-phase-ind').textContent  = (idx+1) + ' / ' + playerPhaseIds.length;
+  document.getElementById('pc-phase-lbl').textContent  = ph.label.toUpperCase();
+  document.getElementById('pl-bg').style.background    = 'radial-gradient(ellipse 120% 120% at 30% 20%, ' + ph.bg + ' 0%, #080F0A 100%)';
+
+  var inner = document.getElementById('orb-inner');
+  inner.style.background = 'radial-gradient(circle, ' + ph.color + ' 0%, ' + ph.dark + ' 60%, rgba(0,0,0,0.3) 100%)';
+  inner.style.boxShadow  = '0 0 60px rgba(' + ph.rgb + ',0.35), 0 0 120px rgba(' + ph.rgb + ',0.2)';
+
+  ['orb-r1','orb-r2','orb-r3'].forEach(function(id){
+    document.getElementById(id).style.borderColor = ph.color;
+  });
+  document.getElementById('orb-sym').textContent = ph.sym;
+  document.getElementById('orb-breath').style.borderColor = 'rgba(' + ph.rgb + ',0.3)';
+  document.getElementById('pt-prog').style.stroke = ph.color;
+
+  document.getElementById('pl-phrase').textContent = ph.phrase;
+  document.getElementById('bg-action').textContent = ph.action;
+  document.getElementById('bg-sub').textContent    = ph.sub;
+
+  timerTotal = ph.mins * 60;
+  timerSecs  = timerTotal;
+  updateTimer();
+}
+
+function togglePlay() {
+  if (timerRunning) {
+    stopTimers();
+    document.getElementById('pc-main-btn').textContent = '▶';
+    document.getElementById('orb-core').className = 'orb-core';
+  } else {
+    try { var c = getAudioCtx(); if (c.state==='suspended') c.resume(); } catch(e){}
+    if (window.speechSynthesis) window.speechSynthesis.getVoices();
+    timerRunning = true;
+    document.getElementById('pc-main-btn').textContent = '⏸';
+    document.getElementById('orb-core').className = 'orb-core state-playing';
+    startBreathCycle();
+    startPhaseAudio(PHASES[playerPhaseIds[curPhaseIdx]]);
+    timerIv = setInterval(function() {
+      if (timerSecs > 0) {
+        timerSecs--; updateTimer();
+      } else {
+        playBowl(396, 6, 0.18);
+        stopTimers();
+        document.getElementById('pc-main-btn').textContent = '▶';
+        document.getElementById('orb-core').className = 'orb-core';
+        if (curPhaseIdx < playerPhaseIds.length - 1) {
+          setTimeout(function(){ nextPhase(); }, 1800);
+        } else {
+          showToast('Practice complete 🙏');
+        }
       }
-    }
+    }, 1000);
+  }
+}
 
-    function startReminderLoop(type) {
-      const prefs = getPrefs();
-      const mins = prefs.reminderMins;
-      if (!mins) return;
-      clearInterval(reminderId);
-      reminderId = setInterval(() => {
-        if (!running) return;
-        const file = type === "walking" ? "reminder_walk_01.mp3" : "reminder_breath_01.mp3";
-        playAudioFile(file);
-      }, mins * 60 * 1000);
-    }
+function startBreathCycle() {
+  if (breathId) { clearTimeout(breathId); breathId = null; }
+  var cycles = [
+    {action:'Breathe in',  sub:'4 seconds', dur:4000},
+    {action:'Hold gently', sub:'2 seconds', dur:2000},
+    {action:'Breathe out', sub:'6 seconds', dur:6000},
+    {action:'Rest',        sub:'',          dur:2000}
+  ];
+  var ci = 0;
+  function tick() {
+    if (!timerRunning) return;
+    var c = cycles[ci % cycles.length];
+    document.getElementById('bg-action').textContent = c.action;
+    document.getElementById('bg-sub').textContent    = c.sub;
+    ci++;
+    breathId = setTimeout(tick, c.dur);
+  }
+  tick();
+}
 
-    function stopAll() {
-      running = false;
-      clearInterval(timerId);
-      clearInterval(reminderId);
-      timerId = null;
-      reminderId = null;
-    }
+function nextPhase() {
+  stopTimers();
+  document.getElementById('pc-main-btn').textContent = '▶';
+  document.getElementById('orb-core').className = 'orb-core';
+  if (curPhaseIdx < playerPhaseIds.length - 1) {
+    loadPhase(curPhaseIdx + 1);
+  } else {
+    showToast('Practice complete 🙏');
+    setTimeout(closePlayer, 1500);
+  }
+}
 
-    async function beginSession() {
-      stopAll();
-      savePrefs();
-      const type = document.getElementById("sessionType").value;
-      seconds = parseInt(document.getElementById("sessionMins").value, 10) * 60;
-      renderTimer();
-      running = true;
-      setStatus("Starting session...");
-      playOpeningChimes();
-      startReminderLoop(type);
-      playIntro(type);
-      timerId = setInterval(async () => {
-        if (!running) return;
-        seconds -= 1;
-        renderTimer();
-        if (seconds <= 0) {
-          stopAll();
-          playClosingChime();
-          if (getPrefs().closingVerse) await playAudioFile("closing_01.mp3");
-          setStatus("Session complete.");
+function prevPhase() {
+  stopTimers();
+  document.getElementById('pc-main-btn').textContent = '▶';
+  document.getElementById('orb-core').className = 'orb-core';
+  if (curPhaseIdx > 0) loadPhase(curPhaseIdx - 1);
+}
+
+function updateTimer() {
+  var ph = PHASES[playerPhaseIds[curPhaseIdx]];
+  var m  = Math.floor(timerSecs / 60);
+  var s  = timerSecs % 60;
+  document.getElementById('pt-time').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  document.getElementById('pt-lbl').textContent  = ph ? ph.label.toUpperCase() : '';
+  var pct = timerTotal > 0 ? timerSecs / timerTotal : 0;
+  document.getElementById('pt-prog').style.strokeDashoffset = 239 * (1 - pct);
+}
+
+// ════════════════════════════════════════
+// DISTRACTION PANEL
+// ════════════════════════════════════════
+var selectedDistraction = null;
+var distractionCount = {};
+
+function openDistractionPanel() {
+  // Pause timer silently (don't stop audio immediately)
+  if (timerRunning) {
+    clearInterval(timerIv); timerIv = null;
+    if (breathId) { clearTimeout(breathId); breathId = null; }
+  }
+  stopSpeech();
+  selectedDistraction = null;
+  document.querySelectorAll('.dp-opt').forEach(function(o){ o.classList.remove('selected'); });
+  document.getElementById('dp-response-wrap').style.display = 'none';
+  document.getElementById('distraction-panel').classList.add('open');
+  // Fade in backdrop
+  setTimeout(function(){
+    var b = document.querySelector('.dp-backdrop');
+    if (b) b.style.background = 'rgba(0,0,0,0.55)';
+  }, 10);
+}
+
+function closeDistractionPanel() {
+  var b = document.querySelector('.dp-backdrop');
+  if (b) b.style.background = '';
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  setTimeout(function(){ document.getElementById('distraction-panel').classList.remove('open'); }, 280);
+}
+
+function selectDistraction(type) {
+  selectedDistraction = type;
+  document.querySelectorAll('.dp-opt').forEach(function(o){ o.classList.remove('selected'); });
+  var opt = document.querySelector('.dp-opt[onclick*="' + type + '"]');
+  if (opt) opt.classList.add('selected');
+
+  var data = DISTRACTION[type];
+  if (!data) return;
+
+  // Track and rotate responses
+  if (!distractionCount[type]) distractionCount[type] = 0;
+  var responses = data.responses;
+  var txt = responses[distractionCount[type] % responses.length];
+  distractionCount[type]++;
+
+  document.getElementById('dp-response-card').style.borderLeftColor = data.borderColor;
+  document.getElementById('dp-response-text').textContent = txt;
+  document.getElementById('dp-response-attr').textContent = data.attr;
+  document.getElementById('dp-response-wrap').style.display = 'block';
+
+  // Gentle voice reading
+  speakDistractionResponse(txt);
+}
+
+function returnToPractice() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  closeDistractionPanel();
+  // Resume the timer and audio after panel closes
+  setTimeout(function(){
+    if (!timerRunning) {
+      timerRunning = true;
+      document.getElementById('pc-main-btn').textContent = '⏸';
+      document.getElementById('orb-core').className = 'orb-core state-playing';
+      startBreathCycle();
+      timerIv = setInterval(function() {
+        if (timerSecs > 0) {
+          timerSecs--; updateTimer();
+        } else {
+          playBowl(396, 6, 0.18);
+          stopTimers();
+          document.getElementById('pc-main-btn').textContent = '▶';
+          document.getElementById('orb-core').className = 'orb-core';
+          if (curPhaseIdx < playerPhaseIds.length - 1) {
+            setTimeout(function(){ nextPhase(); }, 1800);
+          } else {
+            showToast('Practice complete 🙏');
+          }
         }
       }, 1000);
-      setStatus("Practice underway. Guidance at beginning, then silence.");
     }
+  }, 350);
+}
 
-    function togglePause() {
-      if (!timerId) return;
-      running = !running;
-      setStatus(running ? "Resumed." : "Paused.");
-    }
+// ════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════
+function enterApp() {
+  document.getElementById('onboard').style.display = 'none';
+  document.getElementById('main').style.display    = 'block';
+  initHome();
+  buildWeekDots();
+}
 
-    function resetSession() {
-      stopAll();
-      seconds = 0;
-      renderTimer();
-      setStatus("Reset.");
-    }
+function initHome() {
+  var h = new Date().getHours();
+  var greet = h < 12 ? 'GOOD MORNING' : h < 17 ? 'GOOD AFTERNOON' : 'GOOD EVENING';
+  document.getElementById('hh-greet').textContent = greet;
+  var types   = ['sitting', 'walking', 'combo'];
+  var labels  = {sitting:'Sitting', walking:'Walking', combo:'Sitting + Walking'};
+  var descs   = {
+    sitting: 'Settle the body, anchor the mind in the breath. Let the practice unfold.',
+    walking: 'Bring awareness to each step. The body in motion, the mind fully present.',
+    combo:   'Begin in stillness, move with awareness. A complete Bhavana Society practice.'
+  };
+  var t = types[new Date().getDay() % 3];
+  document.getElementById('hh-practice').textContent = labels[t];
+  document.getElementById('hh-desc').textContent     = descs[t];
+  document.querySelector('.hh-cta').onclick = function(){ openPlayer(t); };
+}
 
-    loadPrefsUI();
-    renderTimer();
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
-    }
-  </script>
+function sw(name) {
+  ['home','guide','journal'].forEach(function(s){
+    document.getElementById('s-'+s).classList.toggle('active', s===name);
+    document.getElementById('bn-'+s).classList.toggle('active', s===name);
+  });
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════════════════════
+// JOURNAL
+// ════════════════════════════════════════
+var todayDone = {};
+var TT_MSGS = ['','One form of practice completed.','Both sitting and walking — beautifully done. 🙏'];
+
+function toggleTT(type) {
+  todayDone[type] = !todayDone[type];
+  var colors = {sitting:'107,173,138', walking:'200,148,60'};
+  var rgb  = colors[type];
+  var tile = document.getElementById('tt-'+type);
+  var ck   = document.getElementById('ttc-'+type);
+  if (!tile || !ck) return;
+  tile.style.background  = todayDone[type] ? 'rgba('+rgb+',0.1)' : '';
+  tile.style.borderColor = todayDone[type] ? 'rgba('+rgb+',0.55)' : 'rgba('+rgb+',0.2)';
+  ck.textContent = todayDone[type] ? '✓' : '○';
+  var count = Object.values(todayDone).filter(Boolean).length;
+  var msgEl = document.getElementById('tt-msg');
+  if (msgEl) msgEl.textContent = TT_MSGS[count] || '';
+}
+
+function saveRefl() {
+  streak++;
+  document.getElementById('sc-num').textContent      = streak;
+  document.getElementById('streak-disp').textContent = streak + ' day' + (streak===1?'':'s');
+  buildWeekDots();
+  var btn = document.querySelector('.save-refl');
+  btn.textContent      = 'Saved ✓';
+  btn.style.background = 'var(--slate)';
+  showToast('Reflection saved. May your practice deepen 🙏');
+  setTimeout(function(){ btn.textContent = "Save today's reflection"; btn.style.background = 'var(--sage)'; }, 2500);
+}
+
+function buildWeekDots() {
+  var el = document.getElementById('sc-wk'); if (!el) return;
+  var days  = ['M','T','W','T','F','S','S'];
+  var today = (new Date().getDay() + 6) % 7;
+  el.innerHTML = days.map(function(d,i){
+    return '<div class="sc-day"><span class="sc-dlbl">'+d+'</span><div class="sc-dpip'+(i<=today?' on':'')+'"></div></div>';
+  }).join('');
+}
+
+function showToast(msg) {
+  var el = document.getElementById('toast'); if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 3200);
+}
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+buildWeekDots();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(){}); });
+}
+</script>
 </body>
 </html>
