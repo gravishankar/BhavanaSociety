@@ -1048,16 +1048,19 @@ function speakDistractionResponse(text) {
   window.speechSynthesis.speak(u);
 }
 
-function stopSpeech() {
+var currentGuidedSegments = null;  // active segment array for resume
+
+function stopSpeech(resetIdx) {
   stopCurrentAudio();
   if (window.speechSynthesis) window.speechSynthesis.cancel();
   if (guidedTimeout) { clearTimeout(guidedTimeout); guidedTimeout = null; }
   if (speakTimeout)  { clearTimeout(speakTimeout);  speakTimeout  = null; }
-  guidedSegIdx = 0;
+  if (resetIdx) { guidedSegIdx = 0; currentGuidedSegments = null; }
 }
 
-function runGuidedScript(segments) {
-  guidedSegIdx = 0;
+function runGuidedScript(segments, startIdx) {
+  currentGuidedSegments = segments;
+  guidedSegIdx = startIdx || 0;
   function nextSeg() {
     if (!timerRunning) return;
     if (guidedSegIdx >= segments.length) return;
@@ -1071,18 +1074,25 @@ function runGuidedScript(segments) {
       });
     }, 200);
   }
-  guidedTimeout = setTimeout(nextSeg, 2200);
+  guidedTimeout = setTimeout(nextSeg, startIdx ? 800 : 2200);
 }
 
 function startPhaseAudio(ph) {
-  stopSpeech();
+  stopSpeech(true);  // full reset — new phase
   if (!timerRunning) return;
   var freqs = {settle:440, sitting:432, walking_intro:396, walking:396, close:440};
   playBowl(freqs[ph.id] || 432, 5, 0.18);
   if (ph.guided && voiceEnabled) {
     speakTimeout = setTimeout(function() {
-      if (timerRunning) runGuidedScript(ph.guided);
+      if (timerRunning) runGuidedScript(ph.guided, 0);
     }, 3000);
+  }
+}
+
+function resumeGuidedScript() {
+  if (!voiceEnabled) return;
+  if (currentGuidedSegments && guidedSegIdx < currentGuidedSegments.length) {
+    runGuidedScript(currentGuidedSegments, guidedSegIdx);
   }
 }
 
@@ -1104,15 +1114,15 @@ var timerIv        = null;
 var breathId       = null;
 var streak         = 0;
 
-function stopTimers() {
+function stopTimers(fullReset) {
   clearInterval(timerIv); timerIv = null;
   if (breathId) { clearTimeout(breathId); breathId = null; }
   timerRunning = false;
-  stopSpeech();
+  stopSpeech(fullReset);  // only reset idx when explicitly requested (phase change/close)
 }
 
 function openPlayer(mode) {
-  stopTimers();
+  stopTimers(true);
   playerPhaseIds = (SESSIONS[mode] || SESSIONS.sitting).slice();
   curPhaseIdx    = 0;
   var labels = {sitting:'SITTING', walking:'WALKING', combo:'SITTING + WALKING'};
@@ -1128,7 +1138,7 @@ function openPlayer(mode) {
 }
 
 function closePlayer() {
-  stopTimers();
+  stopTimers(true);
   document.getElementById('player-screen').classList.remove('open');
 }
 
@@ -1175,7 +1185,7 @@ function loadPhase(idx) {
 
 function togglePlay() {
   if (timerRunning) {
-    stopTimers();
+    stopTimers(false);  // pause — preserve guidedSegIdx
     document.getElementById('pc-main-btn').textContent = '▶';
     document.getElementById('orb-core').className = 'orb-core';
   } else {
@@ -1185,13 +1195,18 @@ function togglePlay() {
     document.getElementById('pc-main-btn').textContent = '⏸';
     document.getElementById('orb-core').className = 'orb-core state-playing';
     startBreathCycle();
-    startPhaseAudio(PHASES[playerPhaseIds[curPhaseIdx]]);
+    var isFirstPlay = !currentGuidedSegments;
+    if (isFirstPlay) {
+      startPhaseAudio(PHASES[playerPhaseIds[curPhaseIdx]]);
+    } else {
+      resumeGuidedScript();  // resume from where we left off
+    }
     timerIv = setInterval(function() {
       if (timerSecs > 0) {
         timerSecs--; updateTimer();
       } else {
         playBowl(396, 6, 0.18);
-        stopTimers();
+        stopTimers(true);
         document.getElementById('pc-main-btn').textContent = '▶';
         document.getElementById('orb-core').className = 'orb-core';
         if (curPhaseIdx < playerPhaseIds.length - 1) {
@@ -1225,7 +1240,7 @@ function startBreathCycle() {
 }
 
 function nextPhase() {
-  stopTimers();
+  stopTimers(true);
   document.getElementById('pc-main-btn').textContent = '▶';
   document.getElementById('orb-core').className = 'orb-core';
   if (curPhaseIdx < playerPhaseIds.length - 1) {
@@ -1237,7 +1252,7 @@ function nextPhase() {
 }
 
 function prevPhase() {
-  stopTimers();
+  stopTimers(true);
   document.getElementById('pc-main-btn').textContent = '▶';
   document.getElementById('orb-core').className = 'orb-core';
   if (curPhaseIdx > 0) loadPhase(curPhaseIdx - 1);
@@ -1311,19 +1326,19 @@ function selectDistraction(type) {
 function returnToPractice() {
   if (window.speechSynthesis) window.speechSynthesis.cancel();
   closeDistractionPanel();
-  // Resume the timer and audio after panel closes
   setTimeout(function(){
     if (!timerRunning) {
       timerRunning = true;
       document.getElementById('pc-main-btn').textContent = '⏸';
       document.getElementById('orb-core').className = 'orb-core state-playing';
       startBreathCycle();
+      resumeGuidedScript();  // pick up where the script left off
       timerIv = setInterval(function() {
         if (timerSecs > 0) {
           timerSecs--; updateTimer();
         } else {
           playBowl(396, 6, 0.18);
-          stopTimers();
+          stopTimers(true);
           document.getElementById('pc-main-btn').textContent = '▶';
           document.getElementById('orb-core').className = 'orb-core';
           if (curPhaseIdx < playerPhaseIds.length - 1) {
