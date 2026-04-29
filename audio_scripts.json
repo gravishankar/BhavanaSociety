@@ -1,0 +1,26 @@
+{
+  "sitting_intro": [
+    { "filename": "sitting_intro_01.mp3", "text": "Welcome. Sit in a stable and comfortable posture." },
+    { "filename": "sitting_intro_02.mp3", "text": "Let the body be upright, relaxed, and at ease." },
+    { "filename": "sitting_intro_03.mp3", "text": "Allow the breath to be natural. No forcing. No controlling." },
+    { "filename": "sitting_intro_04.mp3", "text": "Feel one clear touch point of the breath, usually at the nostrils or upper lip." },
+    { "filename": "sitting_intro_05.mp3", "text": "When the mind wanders, gently return to direct sensation. Again and again." },
+    { "filename": "sitting_intro_06.mp3", "text": "Now rest in quiet practice." }
+  ],
+  "walking_intro": [
+    { "filename": "walking_intro_01.mp3", "text": "Welcome to walking meditation." },
+    { "filename": "walking_intro_02.mp3", "text": "Stand still for a moment and feel both feet on the ground." },
+    { "filename": "walking_intro_03.mp3", "text": "Walk slowly on a short path, with eyes softly open for balance." },
+    { "filename": "walking_intro_04.mp3", "text": "Feel lifting, moving, and placing. Simple direct knowing." },
+    { "filename": "walking_intro_05.mp3", "text": "At the end of the path, pause, turn mindfully, and continue." },
+    { "filename": "walking_intro_06.mp3", "text": "Now continue in silence, with steady awareness of each step." }
+  ],
+  "reminders": [
+    { "filename": "reminder_breath_01.mp3", "text": "Gently return to the breath." },
+    { "filename": "reminder_body_01.mp3", "text": "Soften the body, and stay present." },
+    { "filename": "reminder_walk_01.mp3", "text": "Feel the feet meeting the ground." }
+  ],
+  "closing": [
+    { "filename": "closing_01.mp3", "text": "Session complete. May all beings be happy and secure." }
+  ]
+}
