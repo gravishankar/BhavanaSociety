@@ -1080,6 +1080,8 @@ function runGuidedScript(segments, startIdx) {
 function startPhaseAudio(ph) {
   stopSpeech(true);  // full reset — new phase
   if (!timerRunning) return;
+  // Set immediately so pause during opening silence knows where to resume
+  if (ph.guided) currentGuidedSegments = ph.guided;
   var freqs = {settle:440, sitting:432, walking_intro:396, walking:396, close:440};
   playBowl(freqs[ph.id] || 432, 5, 0.18);
   if (ph.guided && voiceEnabled) {
@@ -1185,6 +1187,8 @@ function loadPhase(idx) {
 
 function togglePlay() {
   if (timerRunning) {
+    // If a segment was mid-play (audio was active), step back so resume replays it
+    if (currentAudio && guidedSegIdx > 0) guidedSegIdx--;
     stopTimers(false);  // pause — preserve guidedSegIdx
     document.getElementById('pc-main-btn').textContent = '▶';
     document.getElementById('orb-core').className = 'orb-core';
@@ -1195,8 +1199,7 @@ function togglePlay() {
     document.getElementById('pc-main-btn').textContent = '⏸';
     document.getElementById('orb-core').className = 'orb-core state-playing';
     startBreathCycle();
-    var isFirstPlay = !currentGuidedSegments;
-    if (isFirstPlay) {
+    if (!currentGuidedSegments) {
       startPhaseAudio(PHASES[playerPhaseIds[curPhaseIdx]]);
     } else {
       resumeGuidedScript();  // resume from where we left off
