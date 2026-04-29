@@ -388,6 +388,47 @@ input,textarea,select{font-family:'Lato',sans-serif;}
 .dp-return:hover{opacity:0.9;}
 
 /* ═══════════════════════════════════════════════════════
+   DURATION PICKER
+═══════════════════════════════════════════════════════ */
+#duration-panel{
+  position:fixed;inset:0;z-index:600;
+  display:none;flex-direction:column;align-items:stretch;justify-content:flex-end;
+}
+#duration-panel.open{display:flex;}
+#duration-panel.open .dur-backdrop{background:rgba(0,0,0,0.55);}
+.dur-backdrop{position:absolute;inset:0;transition:background 0.35s;background:rgba(0,0,0,0);}
+.dur-sheet{
+  position:relative;z-index:1;
+  background:var(--bg2);
+  border-top:1px solid var(--border2);
+  border-radius:24px 24px 0 0;
+  padding:1.5rem 1.5rem calc(env(safe-area-inset-bottom,0px) + 2rem);
+  animation:sheet-rise 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.dur-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 1.25rem;}
+.dur-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:400;margin-bottom:0.25rem;color:var(--text);}
+.dur-sub{font-size:0.75rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.5;}
+.dur-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
+.dur-btn{
+  background:var(--surface);border-radius:var(--r);
+  border:1.5px solid var(--border);
+  padding:0.85rem 0;text-align:center;cursor:pointer;
+  transition:all 0.15s;
+}
+.dur-btn:hover{border-color:var(--border2);background:var(--surface2);}
+.dur-btn.selected{border-color:var(--sage);background:var(--sage-bg);}
+.dur-btn-mins{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:400;color:var(--text);display:block;}
+.dur-btn-lbl{font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-top:2px;display:block;}
+.dur-note{font-size:0.72rem;color:var(--text3);text-align:center;margin-bottom:1.25rem;font-style:italic;}
+.dur-start{
+  width:100%;padding:13px;border-radius:var(--r);
+  background:var(--sage);color:#0D1410;font-weight:700;
+  font-size:0.88rem;letter-spacing:0.04em;
+  transition:all 0.2s;box-shadow:0 4px 20px var(--sage-glow);
+}
+.dur-start:hover{opacity:0.9;}
+
+/* ═══════════════════════════════════════════════════════
    UTILS
 ═══════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);border-radius:50px;padding:10px 24px;font-size:0.82rem;opacity:0;transition:opacity 0.3s;z-index:9999;white-space:nowrap;}
@@ -450,14 +491,14 @@ input,textarea,select{font-family:'Lato',sans-serif;}
         <div class="hh-greeting" id="hh-greet">GOOD MORNING</div>
         <div class="hh-title">Begin your<br><span id="hh-practice" style="color:var(--sage)">Sitting</span> practice</div>
         <div class="hh-desc" id="hh-desc">Settle the body, quiet the mind, and let the practice unfold with patience.</div>
-        <button class="hh-cta" onclick="openPlayer('combo')">▶ &nbsp;Start 30-min session</button>
+        <button class="hh-cta" onclick="pickDuration('combo')">▶ &nbsp;Start a session</button>
       </div>
     </div>
 
     <div class="sec-label">Choose a session</div>
     <div class="session-cards">
 
-      <div class="sess-card" onclick="openPlayer('sitting')">
+      <div class="sess-card" onclick="pickDuration('sitting')">
         <div class="sess-orb" style="background:var(--sage-bg);">
           <div class="sess-orb-glow" style="background:radial-gradient(circle,var(--sage-glow),transparent);"></div>
           <span style="color:var(--sage);">🪷</span>
@@ -466,14 +507,14 @@ input,textarea,select{font-family:'Lato',sans-serif;}
           <div class="sess-name" style="color:var(--sage);">Sitting Meditation</div>
           <div class="sess-desc">Breath awareness · Body settling · Mindfulness</div>
           <div class="sess-meta">
-            <div class="sess-dur">20 min</div>
+            <div class="sess-dur" id="dur-sitting">10–45 min</div>
             <div class="sess-dur">Guided intro + silence</div>
           </div>
         </div>
         <div class="sess-play">▶</div>
       </div>
 
-      <div class="sess-card" onclick="openPlayer('walking')">
+      <div class="sess-card" onclick="pickDuration('walking')">
         <div class="sess-orb" style="background:var(--amber-bg);">
           <div class="sess-orb-glow" style="background:radial-gradient(circle,var(--amber-glow),transparent);"></div>
           <span style="color:var(--amber);">🚶</span>
@@ -482,14 +523,14 @@ input,textarea,select{font-family:'Lato',sans-serif;}
           <div class="sess-name" style="color:var(--amber);">Walking Meditation</div>
           <div class="sess-desc">Mindful steps · Present moment · Body awareness</div>
           <div class="sess-meta">
-            <div class="sess-dur">20 min</div>
+            <div class="sess-dur" id="dur-walking">10–45 min</div>
             <div class="sess-dur">Slow, deliberate steps</div>
           </div>
         </div>
         <div class="sess-play">▶</div>
       </div>
 
-      <div class="sess-card" onclick="openPlayer('combo')">
+      <div class="sess-card" onclick="pickDuration('combo')">
         <div class="sess-orb" style="background:var(--clay-bg);">
           <div class="sess-orb-glow" style="background:radial-gradient(circle,var(--clay-glow),transparent);"></div>
           <span style="color:var(--clay);">🧘</span>
@@ -498,7 +539,7 @@ input,textarea,select{font-family:'Lato',sans-serif;}
           <div class="sess-name" style="color:var(--clay);">Sitting then Walking</div>
           <div class="sess-desc">Full practice · Stillness into movement</div>
           <div class="sess-meta">
-            <div class="sess-dur">30 min</div>
+            <div class="sess-dur" id="dur-combo">20–90 min</div>
             <div class="sess-dur">Bhavana Society style</div>
           </div>
         </div>
@@ -723,6 +764,21 @@ input,textarea,select{font-family:'Lato',sans-serif;}
       </a>
     </div>
 
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     DURATION PICKER
+══════════════════════════════════ -->
+<div id="duration-panel">
+  <div class="dur-backdrop" onclick="closeDurationPicker()"></div>
+  <div class="dur-sheet">
+    <div class="dur-handle"></div>
+    <div class="dur-title" id="dur-sheet-title">Sitting Meditation</div>
+    <div class="dur-sub" id="dur-sheet-sub">Choose how long you would like to sit. The guided intro plays at the start; the rest is silence.</div>
+    <div class="dur-grid" id="dur-grid"></div>
+    <div class="dur-note" id="dur-note">Settle: 3 min · Practice: <span id="dur-practice-time">20</span> min · Closing: 2 min</div>
+    <button class="dur-start" onclick="startWithDuration()">Begin Practice</button>
   </div>
 </div>
 
@@ -1371,6 +1427,125 @@ function returnToPractice() {
       }, 1000);
     }
   }, 350);
+}
+
+// ════════════════════════════════════════
+// DURATION PICKER
+// ════════════════════════════════════════
+var durationMode    = 'sitting';
+var selectedMinutes = 20;
+
+var DURATION_OPTIONS = {
+  sitting: {
+    title: 'Sitting Meditation',
+    sub:   'The guided intro plays at the start; the rest is silence.',
+    options: [
+      {mins:10, label:'10 min'},
+      {mins:15, label:'15 min'},
+      {mins:20, label:'20 min'},
+      {mins:30, label:'30 min'},
+      {mins:45, label:'45 min'},
+      {mins:60, label:'1 hour'},
+    ],
+    default: 20,
+    note: function(m){ return 'Settle: 3 min · Sitting: ' + m + ' min · Closing: 2 min'; }
+  },
+  walking: {
+    title: 'Walking Meditation',
+    sub:   'The guided intro plays at the start; then deliberate silence.',
+    options: [
+      {mins:10, label:'10 min'},
+      {mins:15, label:'15 min'},
+      {mins:20, label:'20 min'},
+      {mins:30, label:'30 min'},
+      {mins:45, label:'45 min'},
+      {mins:60, label:'1 hour'},
+    ],
+    default: 20,
+    note: function(m){ return 'Settle: 3 min · Walking intro: 2 min · Walking: ' + m + ' min · Closing: 2 min'; }
+  },
+  combo: {
+    title: 'Sitting then Walking',
+    sub:   'Duration sets the sitting portion; walking will be half that.',
+    options: [
+      {mins:10, label:'10 min'},
+      {mins:20, label:'20 min'},
+      {mins:30, label:'30 min'},
+      {mins:45, label:'45 min'},
+      {mins:60, label:'1 hour'},
+      {mins:90, label:'90 min'},
+    ],
+    default: 20,
+    note: function(m){
+      var w = Math.round(m / 2);
+      return 'Settle: 3 min · Sitting: ' + m + ' min · Walking: ' + w + ' min · Closing: 2 min';
+    }
+  }
+};
+
+function pickDuration(mode) {
+  durationMode = mode;
+  var cfg = DURATION_OPTIONS[mode];
+  selectedMinutes = cfg.default;
+
+  document.getElementById('dur-sheet-title').textContent = cfg.title;
+  document.getElementById('dur-sheet-sub').textContent   = cfg.sub;
+
+  var grid = document.getElementById('dur-grid');
+  grid.innerHTML = cfg.options.map(function(o) {
+    var sel = o.mins === cfg.default ? ' selected' : '';
+    return '<button class="dur-btn' + sel + '" onclick="selectDuration(' + o.mins + ',this)">' +
+           '<span class="dur-btn-mins">' + o.mins + '</span>' +
+           '<span class="dur-btn-lbl">min</span>' +
+           '</button>';
+  }).join('');
+
+  document.getElementById('dur-note').innerHTML =
+    cfg.note(cfg.default).replace('·', '·');
+
+  var panel = document.getElementById('duration-panel');
+  panel.classList.add('open');
+  setTimeout(function(){
+    document.querySelector('.dur-backdrop').style.background = 'rgba(0,0,0,0.55)';
+  }, 10);
+}
+
+function selectDuration(mins, btn) {
+  selectedMinutes = mins;
+  document.querySelectorAll('.dur-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  var cfg = DURATION_OPTIONS[durationMode];
+  document.getElementById('dur-note').textContent = cfg.note(mins);
+}
+
+function closeDurationPicker() {
+  document.querySelector('.dur-backdrop').style.background = '';
+  setTimeout(function(){ document.getElementById('duration-panel').classList.remove('open'); }, 280);
+}
+
+function startWithDuration() {
+  closeDurationPicker();
+  // Apply chosen duration to the relevant phases, then open the player
+  setTimeout(function(){
+    var mode = durationMode;
+    var mins = selectedMinutes;
+
+    // Mutate phase durations for this session only
+    if (mode === 'sitting') {
+      PHASES.sitting.mins = mins;
+    } else if (mode === 'walking') {
+      PHASES.walking.mins = mins;
+    } else if (mode === 'combo') {
+      PHASES.sitting.mins = mins;
+      PHASES.walking.mins = Math.round(mins / 2);
+    }
+
+    // Update home card label to show last chosen duration
+    var lbl = document.getElementById('dur-' + mode);
+    if (lbl) lbl.textContent = mins + ' min';
+
+    openPlayer(mode);
+  }, 320);
 }
 
 // ════════════════════════════════════════
