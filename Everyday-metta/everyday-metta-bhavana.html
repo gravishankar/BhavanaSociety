@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Everyday Mettā — Bhavana Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   TOKENS — exact Bhavana Society design system
+═══════════════════════════════════════════════════════ */
+:root {
+  --bg:        #0D1410;
+  --bg2:       #111A14;
+  --surface:   #182218;
+  --surface2:  #1E2B1E;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #E8EFE6;
+  --text2:     #8FA88A;
+  --text3:     #4F6450;
+
+  --metta:     #4CAF80;
+  --metta-d:   #2D7A55;
+  --metta-glow:rgba(76,175,128,0.25);
+  --metta-bg:  rgba(76,175,128,0.08);
+
+  --karuna:    #E07070;
+  --karuna-d:  #A03040;
+  --karuna-glow:rgba(224,112,112,0.25);
+  --karuna-bg: rgba(224,112,112,0.08);
+
+  --mudita:    #E0B040;
+  --mudita-d:  #A07820;
+  --mudita-glow:rgba(224,176,64,0.25);
+  --mudita-bg: rgba(224,176,64,0.08);
+
+  --upekkha:   #6090E0;
+  --upekkha-d: #3050A0;
+  --upekkha-glow:rgba(96,144,224,0.25);
+  --upekkha-bg:rgba(96,144,224,0.08);
+
+  --gold:      #C8A84B;
+  --r:         12px;
+  --r-lg:      20px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Lato',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  max-width:480px;
+  margin:0 auto;
+  position:relative;
+}
+button{font-family:'Lato',sans-serif;cursor:pointer;border:none;background:none;}
+
+/* ═══════════════════════════════════════════════════════
+   AMBIENT ORBS
+═══════════════════════════════════════════════════════ */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.amb-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.12;animation:amb-drift 20s ease-in-out infinite alternate;}
+.amb-1{width:300px;height:300px;background:var(--metta);top:-80px;left:-80px;animation-delay:0s;}
+.amb-2{width:250px;height:250px;background:var(--upekkha);bottom:20%;right:-60px;animation-delay:-7s;}
+.amb-3{width:180px;height:180px;background:var(--mudita);top:50%;left:30%;animation-delay:-13s;}
+@keyframes amb-drift{from{transform:translate(0,0) scale(1);}to{transform:translate(30px,20px) scale(1.1);}}
+
+#app{position:relative;z-index:1;}
+
+/* ═══════════════════════════════════════════════════════
+   ONBOARDING / SPLASH
+═══════════════════════════════════════════════════════ */
+#onboard{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:2rem 1.5rem 3rem;text-align:center;
+}
+.ob-logo{
+  font-family:'Playfair Display',serif;
+  font-size:2.6rem;font-weight:300;letter-spacing:0.06em;
+  color:var(--text);margin-bottom:0.3rem;
+}
+.ob-logo span{color:var(--metta);}
+.ob-subtitle{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);margin-bottom:3rem;}
+
+.ob-orb{width:150px;height:150px;margin:0 auto 2.5rem;position:relative;display:flex;align-items:center;justify-content:center;}
+.ob-orb-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(76,175,128,0.2);animation:ob-ring-expand 3s ease-in-out infinite;}
+.ob-orb-ring:nth-child(2){animation-delay:1s;inset:-16px;border-color:rgba(76,175,128,0.12);}
+.ob-orb-ring:nth-child(3){animation-delay:2s;inset:-32px;border-color:rgba(76,175,128,0.06);}
+.ob-orb-core{width:76px;height:76px;border-radius:50%;background:radial-gradient(circle, #4CAF80 0%, #2D7A55 60%, #1A4A30 100%);box-shadow:0 0 40px var(--metta-glow);animation:ob-breathe 4s ease-in-out infinite;}
+@keyframes ob-ring-expand{0%,100%{transform:scale(1);opacity:0.6;}50%{transform:scale(1.05);opacity:1;}}
+@keyframes ob-breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+.ob-quote{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;line-height:1.85;color:var(--text2);margin-bottom:0.75rem;max-width:340px;}
+.ob-attr{font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:3rem;}
+
+.ob-activities{display:flex;flex-wrap:wrap;justify-content:center;gap:0.45rem;margin-bottom:3rem;}
+.ob-chip{padding:5px 13px;border-radius:50px;font-size:0.7rem;border:1px solid var(--border2);color:var(--text2);}
+
+.ob-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--metta);color:#0D1410;
+  border-radius:50px;padding:13px 38px;
+  font-size:0.88rem;font-weight:700;letter-spacing:0.06em;
+  transition:all 0.2s;box-shadow:0 8px 32px var(--metta-glow);
+}
+.ob-btn:hover{transform:translateY(-1px);box-shadow:0 12px 40px var(--metta-glow);}
+.ob-note{margin-top:1rem;font-size:0.65rem;color:var(--text3);letter-spacing:0.08em;}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN SHELL
+═══════════════════════════════════════════════════════ */
+#main{display:none;}
+
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 1.25rem 0.9rem;
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,20,16,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.tb-logo{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:400;letter-spacing:0.04em;}
+.tb-logo span{color:var(--metta);}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-privacy{font-size:0.62rem;color:var(--text3);letter-spacing:0.05em;}
+
+/* ═══════════════════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════════════════ */
+.screen{display:none;padding:1.25rem 1.25rem 2rem;animation:screen-in 0.3s ease;}
+.screen.active{display:block;}
+@keyframes screen-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ═══════════════════════════════════════════════════════
+   HOME SCREEN
+═══════════════════════════════════════════════════════ */
+.home-hero{
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:1.5rem;margin-bottom:1.25rem;
+  position:relative;overflow:hidden;
+}
+.home-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 120% 100% at 85% 0%, rgba(76,175,128,0.15) 0%, transparent 65%);
+}
+.hh-inner{position:relative;}
+.hh-label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.hh-title{font-family:'Playfair Display',serif;font-size:1.55rem;font-weight:400;line-height:1.3;margin-bottom:0.5rem;}
+.hh-desc{font-size:0.82rem;color:var(--text2);line-height:1.6;margin-bottom:1.25rem;}
+.hh-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--metta);color:#0D1410;
+  border-radius:50px;padding:10px 24px;
+  font-size:0.82rem;font-weight:700;
+  transition:all 0.15s;
+}
+.hh-cta:hover{opacity:0.9;}
+
+.sec-label{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3);margin-bottom:0.9rem;margin-top:1.5rem;}
+
+/* ── Activity cards ── */
+.activity-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:0.5rem;}
+.act-card{
+  display:flex;align-items:center;gap:14px;
+  background:var(--surface);border-radius:var(--r);
+  padding:0.9rem 1.1rem;cursor:pointer;
+  border:1px solid var(--border);
+  transition:all 0.15s;
+}
+.act-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.act-orb{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.05rem;
+  background:var(--metta-bg);
+  position:relative;
+}
+.act-info{flex:1;}
+.act-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;margin-bottom:2px;}
+.act-desc{font-size:0.7rem;color:var(--text2);line-height:1.4;}
+.act-play{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.65rem;
+  border:1px solid var(--border2);color:var(--text2);
+  transition:all 0.15s;
+}
+.act-card:hover .act-play{background:var(--metta);color:#0D1410;border-color:var(--metta);}
+
+/* ═══════════════════════════════════════════════════════
+   VOICE SESSION — full-screen player style (Calm-inspired)
+═══════════════════════════════════════════════════════ */
+#voice-player{
+  position:fixed;inset:0;z-index:500;
+  display:none;flex-direction:column;
+  background:var(--bg);
+}
+#voice-player.open{display:flex;animation:player-rise 0.4s cubic-bezier(0.16,1,0.3,1);}
+@keyframes player-rise{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:none;}}
+
+.vp-bg{position:absolute;inset:0;z-index:0;transition:background 1.2s ease;}
+.vp-noise{
+  position:absolute;inset:0;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:0.5;pointer-events:none;
+}
+.vp-inner{position:relative;z-index:2;display:flex;flex-direction:column;height:100%;padding:env(safe-area-inset-top,20px) 1.5rem 0;}
+
+/* Player top bar */
+.vp-top{display:flex;align-items:center;justify-content:space-between;padding:1rem 0 0.5rem;}
+.vp-close{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;color:var(--text2);transition:background 0.15s;
+}
+.vp-close:hover{background:rgba(255,255,255,0.15);}
+.vp-session-name{font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text2);}
+.vp-state-badge{
+  font-size:0.68rem;color:var(--text3);
+  background:rgba(255,255,255,0.06);
+  padding:4px 12px;border-radius:20px;
+  transition:all 0.3s;
+}
+
+/* Centre orb area */
+.vp-orb-wrap{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0.5rem 0;
+}
+
+/* Orb */
+.orb-outer{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:2rem;}
+.orb-ring{position:absolute;border-radius:50%;border:1px solid;opacity:0;animation:ring-pulse 4s ease-in-out infinite;}
+.orb-ring-1{width:180px;height:180px;animation-delay:0s;}
+.orb-ring-2{width:220px;height:220px;animation-delay:1.3s;}
+.orb-ring-3{width:260px;height:260px;animation-delay:2.6s;}
+@keyframes ring-pulse{0%{opacity:0;transform:scale(0.92);}40%{opacity:0.35;}100%{opacity:0;transform:scale(1.06);}}
+
+.orb-core{
+  width:130px;height:130px;border-radius:50%;
+  position:relative;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:box-shadow 1s ease;
+}
+.orb-core-inner{
+  position:absolute;inset:0;border-radius:50%;
+  transition:background 1s ease,box-shadow 1s ease;
+  animation:orb-meditate 4.5s ease-in-out infinite;
+}
+@keyframes orb-meditate{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+.orb-symbol{
+  font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:300;
+  color:rgba(255,255,255,0.9);position:relative;z-index:1;
+  text-shadow:0 2px 12px rgba(0,0,0,0.4);
+}
+
+/* Listening pulse — overrides meditate */
+.orb-core.listening .orb-core-inner{animation:orb-listen 1.2s ease-in-out infinite;}
+@keyframes orb-listen{0%,100%{transform:scale(1);}50%{transform:scale(1.14);}}
+
+/* State label under orb */
+.vp-state-text{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1rem;color:rgba(255,255,255,0.55);
+  letter-spacing:0.03em;margin-bottom:0.3rem;
+  min-height:1.4rem;transition:opacity 0.4s;
+}
+.vp-transcript{
+  font-size:0.78rem;color:rgba(255,255,255,0.35);font-style:italic;
+  min-height:1.2rem;text-align:center;margin-bottom:0.75rem;
+}
+
+/* Phrase display — Bhavana player-phrase style */
+.vp-phrase{
+  background:rgba(0,0,0,0.28);border-radius:var(--r);
+  padding:1.1rem 1.25rem;margin-bottom:1rem;
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.06);
+  width:100%;max-width:360px;
+  min-height:80px;display:flex;align-items:center;justify-content:center;
+}
+.vp-phrase-text{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1rem;line-height:1.9;color:rgba(255,255,255,0.78);
+  text-align:center;
+  opacity:0;transform:translateY(6px);
+  transition:opacity 0.6s ease,transform 0.6s ease;
+}
+.vp-phrase-text.visible{opacity:1;transform:translateY(0);}
+
+/* Progress dots */
+.vp-steps{display:flex;gap:5px;justify-content:center;margin-bottom:1rem;}
+.vp-dot{height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,0.10);transition:background 0.5s;max-width:50px;}
+.vp-dot.done{background:rgba(255,255,255,0.35);}
+.vp-dot.current{background:var(--metta);}
+
+/* Controls */
+.vp-controls{
+  display:flex;align-items:center;justify-content:center;gap:1.5rem;
+  padding:0 0 calc(env(safe-area-inset-bottom,0px) + 1.75rem);
+}
+.vpc-side{
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,0.07);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.95rem;color:var(--text2);transition:all 0.15s;
+}
+.vpc-side:hover{background:rgba(255,255,255,0.14);}
+.vpc-main{
+  width:68px;height:68px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;
+  transition:all 0.2s;
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+.vpc-main:hover{transform:scale(1.05);}
+
+/* ── Activity grid (browse / fallback) ── */
+.browse-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
+.bg-card{
+  background:var(--surface);border-radius:var(--r);
+  padding:1rem 0.8rem;cursor:pointer;
+  border:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all 0.15s;text-align:center;
+}
+.bg-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.bg-icon{font-size:1.4rem;}
+.bg-name{font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:400;color:var(--text);}
+.bg-desc{font-size:0.65rem;color:var(--text3);line-height:1.4;}
+
+/* ── Duration screen ── */
+.dur-activity-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:1.25rem;
+}
+.dur-cards{display:flex;gap:10px;margin-bottom:1.25rem;}
+.dur-card{
+  flex:1;background:var(--surface);border-radius:var(--r-lg);
+  padding:1.25rem 1rem;border:1.5px solid var(--border);
+  cursor:pointer;text-align:center;transition:all 0.15s;
+}
+.dur-card:hover{border-color:var(--metta);background:var(--metta-bg);}
+.dur-card-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:400;margin-bottom:4px;}
+.dur-card-sub{font-size:0.65rem;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;}
+
+/* ── Confirmation ── */
+.confirm-q{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.5rem;font-weight:300;line-height:1.5;
+  color:var(--text);margin-bottom:1.5rem;text-align:center;
+}
+.confirm-btns{display:flex;gap:10px;}
+.conf-btn{
+  flex:1;background:var(--surface);border-radius:var(--r);
+  padding:0.9rem;border:1.5px solid var(--border);
+  font-family:'Playfair Display',serif;font-size:1rem;color:var(--text2);
+  cursor:pointer;transition:all 0.15s;
+}
+.conf-btn:hover{border-color:var(--metta);color:var(--text);}
+
+/* ── Close / ending ── */
+.close-q{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.35rem;font-weight:300;line-height:1.6;
+  color:var(--text2);margin-bottom:1.5rem;text-align:center;
+}
+.close-cards{display:flex;flex-direction:column;gap:8px;}
+.close-card{
+  background:var(--surface);border-radius:var(--r);
+  padding:0.9rem 1.25rem;border:1px solid var(--border);
+  cursor:pointer;font-size:0.88rem;color:var(--text);
+  display:flex;align-items:center;gap:10px;
+  transition:all 0.15s;
+}
+.close-card:hover{border-color:var(--border2);}
+.close-card.primary{
+  background:var(--metta);color:#0D1410;border:none;
+  font-weight:700;justify-content:center;
+  box-shadow:0 4px 20px var(--metta-glow);
+}
+.close-card.primary:hover{opacity:0.92;}
+
+/* ── Mic button (within player) ── */
+.mic-wrap{
+  position:relative;width:130px;height:130px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.mic-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(76,175,128,0.2);transition:all 0.3s;}
+.mic-ring.r2{inset:-12px;border-color:rgba(76,175,128,0.12);opacity:0;transition:all 0.4s;}
+.mic-ring.r3{inset:-24px;border-color:rgba(76,175,128,0.06);opacity:0;transition:all 0.5s;}
+.mic-wrap.listening .mic-ring.r2{opacity:1;animation:mic-pulse 1.4s ease-out infinite;}
+.mic-wrap.listening .mic-ring.r3{opacity:1;animation:mic-pulse 1.4s ease-out 0.35s infinite;}
+@keyframes mic-pulse{0%{transform:scale(1);opacity:0.7;}100%{transform:scale(1.25);opacity:0;}}
+
+/* ── Sections within non-player screens ── */
+.panel{padding:1.25rem 1.25rem 2rem;animation:screen-in 0.3s ease;}
+
+/* ── Notice / fallback ── */
+.notice-box{
+  background:var(--surface);border-radius:var(--r);
+  padding:1rem 1.1rem;border:1px solid var(--border);
+  font-size:0.8rem;color:var(--text2);line-height:1.7;
+  margin-top:1rem;
+}
+.notice-box strong{color:var(--text);font-weight:700;}
+
+/* ── Utility ── */
+.gold-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block;}
+.back-link{
+  font-size:0.75rem;color:var(--text3);letter-spacing:0.06em;
+  display:flex;align-items:center;gap:6px;margin-bottom:1.25rem;cursor:pointer;
+  padding:0;
+}
+.back-link:hover{color:var(--text2);}
+.sec-divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0;}
+
+.bhavana-footer{
+  text-align:center;padding:1.5rem 0.5rem 0.5rem;
+  border-top:1px solid var(--border);margin-top:0.5rem;
+}
+.bf-text{font-family:'Playfair Display',serif;font-style:italic;font-size:0.85rem;color:var(--text3);line-height:2;}
+.bf-attr{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-top:4px;opacity:0.6;}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="amb-orb amb-1"></div>
+  <div class="amb-orb amb-2"></div>
+  <div class="amb-orb amb-3"></div>
+</div>
+
+<div id="app">
+
+<!-- ══════════════════════════════════
+     ONBOARDING
+══════════════════════════════════ -->
+<div id="onboard">
+  <div class="ob-logo">Everyday Mett<span>ā</span></div>
+  <div class="ob-subtitle">Bhavana Society · Loving-kindness in daily life</div>
+
+  <div class="ob-orb">
+    <div class="ob-orb-ring"></div>
+    <div class="ob-orb-ring"></div>
+    <div class="ob-orb-ring"></div>
+    <div class="ob-orb-core"></div>
+  </div>
+
+  <div class="ob-quote">"These states should become the mind's<br>constant dwelling-places —<br>not merely places of rare visits."</div>
+  <div class="ob-attr">Bhante Gunaratana · Bhavana Society</div>
+
+  <div class="ob-activities">
+    <div class="ob-chip">Eating</div>
+    <div class="ob-chip">Coffee or Tea</div>
+    <div class="ob-chip">Cooking</div>
+    <div class="ob-chip">Walking</div>
+    <div class="ob-chip">Traffic</div>
+    <div class="ob-chip">Waiting</div>
+    <div class="ob-chip">Cleaning</div>
+    <div class="ob-chip">Starting Work</div>
+  </div>
+
+  <button class="ob-btn" id="ob-enter-btn">Begin Practice</button>
+  <div class="ob-note">VOICE-FIRST · FREE · BHAVANA SOCIETY TRADITION</div>
+</div>
+
+<!-- ══════════════════════════════════
+     MAIN
+══════════════════════════════════ -->
+<div id="main">
+
+  <div class="top-bar">
+    <div class="tb-logo">Everyday Mett<span>ā</span></div>
+    <div class="tb-right">
+      <span class="tb-privacy">🎙 mic on tap only</span>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="s-home" class="screen active">
+    <div class="home-hero">
+      <div class="hh-inner">
+        <div class="hh-label">Voice-first practice</div>
+        <div class="hh-title">Practice can happen<br><span style="color:var(--metta)">in the middle of life.</span></div>
+        <div class="hh-desc">Tap the mic, say what you're doing, and receive a loving-kindness practice — hands-free.</div>
+        <button class="hh-cta" id="home-voice-btn">🎙 &nbsp;Start voice practice</button>
+      </div>
+    </div>
+
+    <div class="sec-label">Or choose an activity</div>
+    <div class="activity-cards" id="home-act-cards"></div>
+
+    <div class="bhavana-footer">
+      <div class="bf-text">May all beings be well, happy, and peaceful.<br>May no harm come to them.</div>
+      <div class="bf-attr">Bhavana Society · High View, West Virginia · bhavanasociety.org</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══════════════════════════════════
+     VOICE PLAYER (full-screen)
+══════════════════════════════════ -->
+<div id="voice-player">
+  <div class="vp-bg" id="vp-bg"></div>
+  <div class="vp-noise"></div>
+  <div class="vp-inner">
+
+    <!-- Top -->
+    <div class="vp-top">
+      <button class="vp-close" id="vp-close-btn">✕</button>
+      <div class="vp-session-name" id="vp-session-name">Everyday Mettā</div>
+      <div class="vp-state-badge" id="vp-state-badge">Idle</div>
+    </div>
+
+    <!-- Orb area -->
+    <div class="vp-orb-wrap" id="vp-orb-wrap">
+
+      <!-- Default: mic orb for ask/confirm/duration states -->
+      <div id="vp-mic-area">
+        <div class="mic-wrap" id="vp-mic-wrap">
+          <div class="mic-ring"></div>
+          <div class="mic-ring r2"></div>
+          <div class="mic-ring r3"></div>
+          <div class="orb-core" id="vp-orb-core">
+            <div class="orb-core-inner" id="vp-orb-inner"
+              style="background:radial-gradient(circle, #4CAF80 0%, #2D7A55 60%, #1A4A30 100%);box-shadow:0 0 50px var(--metta-glow);">
+            </div>
+            <div class="orb-ring orb-ring-1" style="border-color:rgba(76,175,128,0.3);"></div>
+            <div class="orb-ring orb-ring-2" style="border-color:rgba(76,175,128,0.18);"></div>
+            <div class="orb-ring orb-ring-3" style="border-color:rgba(76,175,128,0.08);"></div>
+            <svg class="orb-symbol" id="orb-mic-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+              <rect x="11" y="3" width="10" height="16" rx="5" fill="white" opacity="0.9"/>
+              <path d="M7 16C7 21.523 11.03 26 16 26C20.97 26 25 21.523 25 16" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9"/>
+              <line x1="16" y1="26" x2="16" y2="30" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+              <line x1="11" y1="30" x2="21" y2="30" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guidance orb (no mic icon) -->
+      <div id="vp-guide-area" style="display:none">
+        <div class="orb-outer">
+          <div class="orb-core" id="guide-orb-core">
+            <div class="orb-core-inner" id="guide-orb-inner"
+              style="background:radial-gradient(circle, #4CAF80 0%, #2D7A55 60%, #1A4A30 100%);box-shadow:0 0 50px var(--metta-glow);">
+            </div>
+            <div class="orb-ring orb-ring-1" style="border-color:rgba(76,175,128,0.3);"></div>
+            <div class="orb-ring orb-ring-2" style="border-color:rgba(76,175,128,0.18);"></div>
+            <div class="orb-ring orb-ring-3" style="border-color:rgba(76,175,128,0.08);"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vp-state-text" id="vp-state-text">Tap the orb to begin</div>
+      <div class="vp-transcript" id="vp-transcript"></div>
+
+      <!-- Phrase box — shown during guiding + confirm + duration -->
+      <div class="vp-phrase" id="vp-phrase" style="display:none">
+        <div class="vp-phrase-text" id="vp-phrase-text"></div>
+      </div>
+
+      <!-- Activity grid — shown during ask_activity if speech unavailable -->
+      <div id="vp-activity-grid" style="display:none;width:100%;max-width:380px">
+        <div class="browse-grid" id="vp-browse-grid"></div>
+      </div>
+
+      <!-- Confirm buttons -->
+      <div id="vp-confirm-area" style="display:none;width:100%;max-width:340px">
+        <div class="confirm-btns">
+          <button class="conf-btn" id="conf-yes">Yes</button>
+          <button class="conf-btn" id="conf-no">No</button>
+        </div>
+      </div>
+
+      <!-- Duration choice -->
+      <div id="vp-dur-area" style="display:none;width:100%;max-width:340px">
+        <div class="dur-cards">
+          <div class="dur-card" id="dur-short">
+            <div class="dur-card-title">Short</div>
+            <div class="dur-card-sub">~30 seconds</div>
+          </div>
+          <div class="dur-card" id="dur-long">
+            <div class="dur-card-title">Longer</div>
+            <div class="dur-card-sub">~2 minutes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress dots (guiding) -->
+      <div class="vp-steps" id="vp-steps" style="display:none;width:100%;max-width:340px"></div>
+
+      <!-- Ending choices -->
+      <div id="vp-close-area" style="display:none;width:100%;max-width:340px">
+        <div class="close-cards">
+          <button class="close-card primary" id="close-another">Another practice</button>
+          <button class="close-card" id="close-repeat">↩ &nbsp;Repeat this one</button>
+          <button class="close-card" id="close-finish">Finish for now</button>
+        </div>
+      </div>
+
+    </div><!-- /vp-orb-wrap -->
+
+    <!-- Controls (shown during guiding only) -->
+    <div class="vp-controls" id="vp-playback" style="display:none">
+      <button class="vpc-side" id="ctrl-repeat" title="Repeat phrase">↩</button>
+      <button class="vpc-main" id="ctrl-pause" title="Pause / Resume">⏸</button>
+      <button class="vpc-side" id="ctrl-stop" title="Stop">✕</button>
+    </div>
+
+    <!-- Tap-to-speak hint (non-guiding states) -->
+    <div style="text-align:center;padding:0 0 calc(env(safe-area-inset-bottom,0px) + 1.5rem)">
+      <div style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.2)" id="vp-hint">Tap the orb to speak</div>
+    </div>
+
+  </div><!-- /vp-inner -->
+</div><!-- /voice-player -->
+
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════════
+// AUDIO CONFIG
+// ═══════════════════════════════════════════════════
+var AUDIO_PATH   = 'audio/';
+var mp3Available = true;  // set false if audio/ folder not present
+var currentAudio = null;
+
+// ═══════════════════════════════════════════════════
+// CONTENT — Eight Everyday Mettā practices
+// Each phrase: {text, filename, pause} matching everyday_metta_audio_gen.py
+// pause = silence in seconds after audio ends (meditative spacing)
+// ═══════════════════════════════════════════════════
+const PRACTICES = {
+  eating: {
+    label:"Eating", icon:"🍽️",
+    desc:"Pause before the first bite",
+    synonyms:["eating","having lunch","having dinner","breakfast","about to eat","meal","food","lunch","dinner"],
+    short:[
+      {text:"Before the first bite, pause.",                           filename:"eating_short_01.mp3", pause:6},
+      {text:"This food traveled far to reach you.",                    filename:"eating_short_02.mp3", pause:5},
+      {text:"Many hands planted, picked, packed, and prepared it.",    filename:"eating_short_03.mp3", pause:6},
+      {text:"May they be safe.",                                       filename:"eating_short_04.mp3", pause:7},
+      {text:"May they be nourished.",                                  filename:"eating_short_05.mp3", pause:7},
+      {text:"May they live with ease.",                                filename:"eating_short_06.mp3", pause:8}
+    ],
+    long:[
+      {text:"Before eating, pause for a moment.",                      filename:"eating_long_01.mp3",  pause:5},
+      {text:"This meal did not begin in your kitchen.",                filename:"eating_long_02.mp3",  pause:5},
+      {text:"It began in soil, in sun, in rain, in effort.",           filename:"eating_long_03.mp3",  pause:6},
+      {text:"Farmers rose early. Workers loaded trucks in the dark.",  filename:"eating_long_04.mp3",  pause:6},
+      {text:"Someone stocked the shelves. Someone cooked with care.",  filename:"eating_long_05.mp3",  pause:5},
+      {text:"Hold all of them gently in your mind.",                   filename:"eating_long_06.mp3",  pause:8},
+      {text:"May they be safe.",                                       filename:"eating_long_07.mp3",  pause:7},
+      {text:"May they be healthy.",                                    filename:"eating_long_08.mp3",  pause:7},
+      {text:"May they be peaceful.",                                   filename:"eating_long_09.mp3",  pause:7},
+      {text:"May they live with ease.",                                filename:"eating_long_10.mp3",  pause:8},
+      {text:"Eat with gratitude.",                                     filename:"eating_long_11.mp3",  pause:6}
+    ]
+  },
+  coffee_tea:{
+    label:"Coffee or Tea", icon:"☕",
+    desc:"Connect comfort to unseen labor",
+    synonyms:["coffee","tea","chai","drinking coffee","making tea","tea break","having coffee","cup of tea","cup of coffee","matcha","latte","cappuccino"],
+    short:[
+      {text:"Before the first sip, pause.",                               filename:"coffee_tea_short_01.mp3", pause:6},
+      {text:"This comfort reached you through many hands.",               filename:"coffee_tea_short_02.mp3", pause:5},
+      {text:"Remember the farmers, pickers, drivers, and sellers.",       filename:"coffee_tea_short_03.mp3", pause:6},
+      {text:"May they be safe.",                                          filename:"coffee_tea_short_04.mp3", pause:7},
+      {text:"May they be healthy.",                                       filename:"coffee_tea_short_05.mp3", pause:7},
+      {text:"May they live with ease.",                                   filename:"coffee_tea_short_06.mp3", pause:8}
+    ],
+    long:[
+      {text:"Before the first sip, pause.",                               filename:"coffee_tea_long_01.mp3",  pause:6},
+      {text:"This drink did not begin here.",                             filename:"coffee_tea_long_02.mp3",  pause:5},
+      {text:"Many people worked in heat, rain, effort, and distance.",    filename:"coffee_tea_long_03.mp3",  pause:6},
+      {text:"This warmth has come to you through their labor.",           filename:"coffee_tea_long_04.mp3",  pause:6},
+      {text:"Remember the farmers, harvesters, drivers, roasters, and sellers.", filename:"coffee_tea_long_05.mp3", pause:6},
+      {text:"May they be safe.",                                          filename:"coffee_tea_long_06.mp3",  pause:7},
+      {text:"May they be healthy.",                                       filename:"coffee_tea_long_07.mp3",  pause:7},
+      {text:"May they be peaceful.",                                      filename:"coffee_tea_long_08.mp3",  pause:7},
+      {text:"May their lives unfold with ease.",                          filename:"coffee_tea_long_09.mp3",  pause:8},
+      {text:"Drink with gratitude.",                                      filename:"coffee_tea_long_10.mp3",  pause:6}
+    ]
+  },
+  cooking:{
+    label:"Cooking", icon:"🍳",
+    desc:"Let preparation become care",
+    synonyms:["cooking","making food","preparing dinner","preparing lunch","making dinner","making lunch","in the kitchen","baking","making breakfast"],
+    short:[
+      {text:"As you cook, pause.",                               filename:"cooking_short_01.mp3", pause:6},
+      {text:"These hands are acts of care.",                     filename:"cooking_short_02.mp3", pause:5},
+      {text:"Someone will receive this nourishment.",            filename:"cooking_short_03.mp3", pause:6},
+      {text:"May they be well.",                                 filename:"cooking_short_04.mp3", pause:7},
+      {text:"May this food bring them ease.",                    filename:"cooking_short_05.mp3", pause:7},
+      {text:"May you be at peace as you prepare it.",           filename:"cooking_short_06.mp3", pause:8}
+    ],
+    long:[
+      {text:"As your hands move through this work, pause.",     filename:"cooking_long_01.mp3",  pause:6},
+      {text:"Cooking is one of the oldest forms of love.",      filename:"cooking_long_02.mp3",  pause:5},
+      {text:"You are turning simple ingredients into nourishment.", filename:"cooking_long_03.mp3", pause:6},
+      {text:"Think of those who will eat what you prepare.",    filename:"cooking_long_04.mp3",  pause:6},
+      {text:"And those who cannot cook tonight.",               filename:"cooking_long_05.mp3",  pause:5},
+      {text:"And those who go without.",                        filename:"cooking_long_06.mp3",  pause:7},
+      {text:"May all beings be nourished.",                     filename:"cooking_long_07.mp3",  pause:7},
+      {text:"May you find ease in this work.",                  filename:"cooking_long_08.mp3",  pause:7},
+      {text:"May those who eat feel cared for.",                filename:"cooking_long_09.mp3",  pause:7},
+      {text:"May they be well.",                                filename:"cooking_long_10.mp3",  pause:7},
+      {text:"May they be at peace.",                            filename:"cooking_long_11.mp3",  pause:7},
+      {text:"May they live with ease.",                         filename:"cooking_long_12.mp3",  pause:8}
+    ]
+  },
+  traffic:{
+    label:"Traffic or Commute", icon:"🚗",
+    desc:"Shared humanity and safety on the road",
+    synonyms:["driving","in traffic","commuting","on my commute","stuck in traffic","traffic jam","on the road","highway","ride","bus","train"],
+    short:[
+      {text:"At this moment, pause.",                                    filename:"traffic_short_01.mp3", pause:6},
+      {text:"Everyone around you wants to get somewhere safe.",          filename:"traffic_short_02.mp3", pause:5},
+      {text:"Everyone is carrying something.",                           filename:"traffic_short_03.mp3", pause:6},
+      {text:"May these travelers be safe.",                              filename:"traffic_short_04.mp3", pause:7},
+      {text:"May they reach where they need to go in peace.",            filename:"traffic_short_05.mp3", pause:7},
+      {text:"May you arrive with ease.",                                 filename:"traffic_short_06.mp3", pause:8}
+    ],
+    long:[
+      {text:"In this delay, pause.",                                     filename:"traffic_long_01.mp3",  pause:6},
+      {text:"Every car around you holds a life.",                        filename:"traffic_long_02.mp3",  pause:5},
+      {text:"Someone is late and worried.",                              filename:"traffic_long_03.mp3",  pause:5},
+      {text:"Someone is tired.",                                         filename:"traffic_long_04.mp3",  pause:5},
+      {text:"Someone is on the way to something they love.",             filename:"traffic_long_05.mp3",  pause:5},
+      {text:"Someone is driving toward a hard day.",                     filename:"traffic_long_06.mp3",  pause:5},
+      {text:"We are all trying to move through this world.",             filename:"traffic_long_07.mp3",  pause:7},
+      {text:"May all these travelers be safe.",                          filename:"traffic_long_08.mp3",  pause:7},
+      {text:"May they be free from stress.",                             filename:"traffic_long_09.mp3",  pause:7},
+      {text:"May they be peaceful.",                                     filename:"traffic_long_10.mp3",  pause:7},
+      {text:"May they reach where they need to go with ease.",           filename:"traffic_long_11.mp3",  pause:7},
+      {text:"May you too arrive safely and at peace.",                   filename:"traffic_long_12.mp3",  pause:8}
+    ]
+  },
+  waiting:{
+    label:"Waiting in Line", icon:"⏳",
+    desc:"Delay as a cue for practice",
+    synonyms:["waiting","in line","standing in line","stuck in line","waiting in line","queue","on hold","hold"],
+    short:[
+      {text:"This pause is unexpected.",                                 filename:"waiting_short_01.mp3", pause:5},
+      {text:"Let it be a practice.",                                     filename:"waiting_short_02.mp3", pause:5},
+      {text:"Everyone here is waiting too.",                             filename:"waiting_short_03.mp3", pause:6},
+      {text:"May they be patient and at ease.",                          filename:"waiting_short_04.mp3", pause:7},
+      {text:"May you be patient and at ease.",                           filename:"waiting_short_05.mp3", pause:7},
+      {text:"May this moment soften.",                                   filename:"waiting_short_06.mp3", pause:8}
+    ],
+    long:[
+      {text:"You did not plan for this wait.",                           filename:"waiting_long_01.mp3",  pause:5},
+      {text:"And yet here it is.",                                       filename:"waiting_long_02.mp3",  pause:6},
+      {text:"Look around at the others waiting.",                        filename:"waiting_long_03.mp3",  pause:5},
+      {text:"Each of them has somewhere to be.",                         filename:"waiting_long_04.mp3",  pause:5},
+      {text:"Each has things weighing on them today.",                   filename:"waiting_long_05.mp3",  pause:5},
+      {text:"We are briefly sharing this small inconvenience.",          filename:"waiting_long_06.mp3",  pause:6},
+      {text:"May each person here be well.",                             filename:"waiting_long_07.mp3",  pause:7},
+      {text:"May they feel a little lighter.",                           filename:"waiting_long_08.mp3",  pause:7},
+      {text:"May impatience soften into presence.",                      filename:"waiting_long_09.mp3",  pause:7},
+      {text:"May you and everyone here be at peace.",                    filename:"waiting_long_10.mp3",  pause:7},
+      {text:"May this moment be enough.",                                filename:"waiting_long_11.mp3",  pause:9}
+    ]
+  },
+  walking:{
+    label:"Walking", icon:"🚶",
+    desc:"Send mettā to people you pass",
+    synonyms:["walking","taking a walk","walking outside","going for a walk","out walking","strolling","walk"],
+    short:[
+      {text:"With each step, a quiet wish.",                             filename:"walking_short_01.mp3", pause:5},
+      {text:"Notice the people you pass.",                              filename:"walking_short_02.mp3", pause:5},
+      {text:"Each one wants to be happy and free from harm.",           filename:"walking_short_03.mp3", pause:6},
+      {text:"May they be safe.",                                        filename:"walking_short_04.mp3", pause:7},
+      {text:"May they be well.",                                        filename:"walking_short_05.mp3", pause:7},
+      {text:"May they move through today with ease.",                   filename:"walking_short_06.mp3", pause:8}
+    ],
+    long:[
+      {text:"As your feet meet the ground, pause inwardly.",            filename:"walking_long_01.mp3",  pause:6},
+      {text:"You are moving through a world full of lives.",            filename:"walking_long_02.mp3",  pause:5},
+      {text:"The person ahead of you has worries and joys.",            filename:"walking_long_03.mp3",  pause:5},
+      {text:"The person behind you does too.",                          filename:"walking_long_04.mp3",  pause:6},
+      {text:"With each step, extend a quiet wish.",                     filename:"walking_long_05.mp3",  pause:5},
+      {text:"May the people I pass be safe.",                           filename:"walking_long_06.mp3",  pause:7},
+      {text:"May they be healthy and strong.",                          filename:"walking_long_07.mp3",  pause:7},
+      {text:"May they know peace today.",                               filename:"walking_long_08.mp3",  pause:7},
+      {text:"May they find ease in ordinary moments.",                  filename:"walking_long_09.mp3",  pause:7},
+      {text:"May you too feel the ground beneath you.",                 filename:"walking_long_10.mp3",  pause:7},
+      {text:"May you walk with care and without fear.",                 filename:"walking_long_11.mp3",  pause:7},
+      {text:"May this journey hold something good.",                    filename:"walking_long_12.mp3",  pause:8}
+    ]
+  },
+  cleaning:{
+    label:"Cleaning", icon:"🧹",
+    desc:"Transform maintenance into care",
+    synonyms:["cleaning","doing dishes","tidying up","sweeping","vacuuming","washing dishes","scrubbing","tidying","laundry","mopping"],
+    short:[
+      {text:"As you clean, pause.",                                      filename:"cleaning_short_01.mp3", pause:6},
+      {text:"This work is an act of care.",                              filename:"cleaning_short_02.mp3", pause:5},
+      {text:"Others will move through this space.",                      filename:"cleaning_short_03.mp3", pause:6},
+      {text:"May they feel ease here.",                                  filename:"cleaning_short_04.mp3", pause:7},
+      {text:"May this home be a place of peace.",                        filename:"cleaning_short_05.mp3", pause:7},
+      {text:"May all who enter be well.",                                filename:"cleaning_short_06.mp3", pause:8}
+    ],
+    long:[
+      {text:"Cleaning is quiet, unglamorous care.",                      filename:"cleaning_long_01.mp3",  pause:5},
+      {text:"And yet it matters.",                                       filename:"cleaning_long_02.mp3",  pause:6},
+      {text:"As your hands work, let the mind open.",                    filename:"cleaning_long_03.mp3",  pause:5},
+      {text:"Think of those who will use this space.",                   filename:"cleaning_long_04.mp3",  pause:6},
+      {text:"Think of those who clean spaces they will never inhabit.",  filename:"cleaning_long_05.mp3",  pause:6},
+      {text:"Workers who clean offices, hospitals, and homes unseen.",   filename:"cleaning_long_06.mp3",  pause:6},
+      {text:"May they be respected.",                                    filename:"cleaning_long_07.mp3",  pause:7},
+      {text:"May their labor be honored.",                               filename:"cleaning_long_08.mp3",  pause:7},
+      {text:"May this space hold peace for all who enter it.",           filename:"cleaning_long_09.mp3",  pause:7},
+      {text:"May those who rest here feel ease.",                        filename:"cleaning_long_10.mp3",  pause:7},
+      {text:"May your own effort today be enough.",                      filename:"cleaning_long_11.mp3",  pause:7},
+      {text:"May you find satisfaction in this care.",                   filename:"cleaning_long_12.mp3",  pause:8}
+    ]
+  },
+  starting_work:{
+    label:"Starting Work", icon:"💻",
+    desc:"Set a non-harming intention for the day",
+    synonyms:["starting work","beginning work","about to work","opening email","starting my day","work","at my desk","beginning my day","morning","at work"],
+    short:[
+      {text:"Before the first task, pause.",                             filename:"starting_work_short_01.mp3", pause:6},
+      {text:"Set a quiet intention.",                                    filename:"starting_work_short_02.mp3", pause:5},
+      {text:"May my work today cause no harm.",                         filename:"starting_work_short_03.mp3", pause:7},
+      {text:"May it bring some good.",                                   filename:"starting_work_short_04.mp3", pause:7},
+      {text:"May I meet others with patience.",                          filename:"starting_work_short_05.mp3", pause:7},
+      {text:"May this day unfold with ease.",                            filename:"starting_work_short_06.mp3", pause:8}
+    ],
+    long:[
+      {text:"Before you open the first message, pause.",                 filename:"starting_work_long_01.mp3",  pause:6},
+      {text:"You are about to enter a day of effort and attention.",     filename:"starting_work_long_02.mp3",  pause:5},
+      {text:"There will be small frustrations.",                         filename:"starting_work_long_03.mp3",  pause:5},
+      {text:"There will be moments of connection.",                      filename:"starting_work_long_04.mp3",  pause:5},
+      {text:"You will affect others through your words and actions today.", filename:"starting_work_long_05.mp3", pause:6},
+      {text:"Set a quiet intention now.",                                filename:"starting_work_long_06.mp3",  pause:5},
+      {text:"May my work cause no harm.",                                filename:"starting_work_long_07.mp3",  pause:7},
+      {text:"May it offer something of value.",                          filename:"starting_work_long_08.mp3",  pause:7},
+      {text:"May I listen more than I react.",                           filename:"starting_work_long_09.mp3",  pause:7},
+      {text:"May I meet difficulty with patience.",                      filename:"starting_work_long_10.mp3",  pause:7},
+      {text:"May those I work with be well.",                            filename:"starting_work_long_11.mp3",  pause:7},
+      {text:"May this day, in some small way, be good.",                 filename:"starting_work_long_12.mp3",  pause:8}
+    ]
+  }
+};
+
+const CONTROL_INTENTS = {
+  short:  ["short","quick","30 seconds","brief","fast"],
+  long:   ["long","longer","two minutes","2 minutes","full"],
+  pause:  ["pause","hold on","wait"],
+  resume: ["resume","continue","go on","keep going","play"],
+  repeat: ["repeat","say that again","again","once more"],
+  stop:   ["stop","finish","end","done","quit"],
+  yes:    ["yes","correct","that is right","right","yeah","yep","sure","uh huh"],
+  no:     ["no","not that","wrong","nope","incorrect","nah"]
+};
+
+// ═══════════════════════════════════════════════════
+// INTENT PARSER
+// ═══════════════════════════════════════════════════
+function parseActivity(t) {
+  t = t.toLowerCase().trim();
+  let best=null, bestScore=0;
+  for(const key of Object.keys(PRACTICES)){
+    const p=PRACTICES[key];
+    for(const syn of p.synonyms){
+      if(t.includes(syn)){
+        const sc=syn.split(' ').length / (t.split(' ').length||1);
+        if(sc>bestScore){bestScore=sc;best=key;}
+      }
+    }
+  }
+  if(!best)return null;
+  return {id:best,label:PRACTICES[best].label,confidence:Math.min(1,bestScore*1.8+0.3)};
+}
+
+function parseControl(t) {
+  t = t.toLowerCase().trim();
+  for(const [intent,phrases] of Object.entries(CONTROL_INTENTS)){
+    for(const p of phrases) if(t.includes(p)) return intent;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════
+// SPEECH OUTPUT — MP3 first, Web Speech fallback
+// ═══════════════════════════════════════════════════
+let selectedVoice=null;
+let speakResolve=null;
+let isPaused=false;
+let pauseTimeout=null;
+
+function loadVoices(){
+  const v=window.speechSynthesis.getVoices();
+  selectedVoice=v.find(x=>/samantha|karen|victoria|moira|tessa/i.test(x.name)&&x.lang.startsWith('en'))
+    ||v.find(x=>x.lang==='en-US')
+    ||v.find(x=>x.lang.startsWith('en'))
+    ||v[0];
+}
+if(window.speechSynthesis){loadVoices();window.speechSynthesis.onvoiceschanged=loadVoices;}
+
+// Stop current audio immediately
+function stopCurrentAudio(){
+  if(currentAudio){
+    try{currentAudio.pause();currentAudio.currentTime=0;}catch(e){}
+    currentAudio=null;
+  }
+  if(pauseTimeout){clearTimeout(pauseTimeout);pauseTimeout=null;}
+}
+
+// Web Speech fallback
+function speakFallback(text,onEnd){
+  if(!window.speechSynthesis){if(onEnd)onEnd();return;}
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=0.88;u.pitch=0.95;
+  if(selectedVoice)u.voice=selectedVoice;
+  u.onend=u.onerror=()=>{if(onEnd)onEnd();};
+  window.speechSynthesis.speak(u);
+}
+
+// Play one MP3 segment, fall back to Web Speech on error
+function playMP3seg(seg,onEnd){
+  stopCurrentAudio();
+  const url=AUDIO_PATH+(seg.filename||'');
+  const audio=new Audio(url);
+  audio.volume=0.92;
+  audio.addEventListener('ended',()=>{currentAudio=null;if(onEnd)onEnd();});
+  audio.addEventListener('error',()=>{currentAudio=null;speakFallback(seg.text||seg,onEnd);});
+  const p=audio.play();
+  if(p!==undefined){
+    p.then(()=>{currentAudio=audio;})
+     .catch(e=>{
+       currentAudio=null;
+       if(e.name==='NotAllowedError'){speakFallback(seg.text||seg,onEnd);}
+       else{if(onEnd)onEnd();}
+     });
+  } else {
+    currentAudio=audio;
+  }
+}
+
+// Main speak function — accepts either a {text,filename,pause} segment or a plain string
+// Returns a Promise that resolves after audio AND post-phrase pause
+function speakText(segOrText){
+  return new Promise(res=>{
+    speakResolve=res;
+    const isObj=typeof segOrText==='object';
+    const text=isObj?segOrText.text:segOrText;
+    const pause=isObj?(segOrText.pause||4):4;
+
+    const afterAudio=()=>{
+      speakResolve=null;
+      pauseTimeout=setTimeout(()=>{pauseTimeout=null;res();},pause*1000);
+    };
+
+    if(mp3Available&&isObj&&segOrText.filename){
+      playMP3seg(segOrText,afterAudio);
+    } else {
+      speakFallback(text,afterAudio);
+    }
+  });
+}
+
+function stopSpeaking(){
+  stopCurrentAudio();
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(speakResolve){speakResolve();speakResolve=null;}
+}
+function pauseSpeaking(){
+  if(currentAudio){try{currentAudio.pause();}catch(e){}isPaused=true;}
+  else if(window.speechSynthesis?.speaking){window.speechSynthesis.pause();isPaused=true;}
+}
+function resumeSpeaking(){
+  if(isPaused){
+    if(currentAudio){try{currentAudio.play();}catch(e){}}
+    else if(window.speechSynthesis){window.speechSynthesis.resume();}
+    isPaused=false;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SPEECH INPUT
+// ═══════════════════════════════════════════════════
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let recognition=null;
+let speechAvailable=!!SR;
+let currentRecognition=null;
+
+if(speechAvailable){
+  recognition=new SR();
+  recognition.continuous=false;
+  recognition.interimResults=true;
+  recognition.maxAlternatives=3;
+  recognition.lang='en-US';
+}
+
+function listenOnce(onInterim){
+  return new Promise((res)=>{
+    if(!recognition){res('');return;}
+    try{recognition.abort();}catch(e){}
+    let final='';
+    recognition.onresult=e=>{
+      let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const r=e.results[i];
+        if(r.isFinal)final=r[0].transcript;
+        else interim+=r[0].transcript;
+      }
+      if(onInterim)onInterim(final||interim);
+    };
+    recognition.onend=()=>res(final);
+    recognition.onerror=e=>{
+      if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+        speechAvailable=false;
+      }
+      res('');
+    };
+    try{recognition.start();}catch(e){res('');}
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// PLAYER STATE MACHINE
+// ═══════════════════════════════════════════════════
+// States: idle | ask_activity | confirm_activity | ask_duration | guiding | closing
+let STATE='idle';
+let currentActivity=null;
+let currentDuration='short';
+let guideScript=[];
+let guideIndex=0;
+let guideRunning=false;
+let guidePaused=false;
+
+function setState(s){
+  STATE=s;
+  const badge=document.getElementById('vp-state-badge');
+  const labels={
+    idle:'',ask_activity:'Listening…',confirm_activity:'Confirm',
+    ask_duration:'Duration',guiding:'Practice',closing:'Complete'
+  };
+  badge.textContent=labels[s]||s;
+}
+
+// ─── Player open/close ───
+function openPlayer(){
+  document.getElementById('voice-player').classList.add('open');
+  setPlayerBg(null);
+}
+function closePlayer(){
+  stopSpeaking();
+  guideRunning=false;
+  try{if(recognition)recognition.abort();}catch(e){}
+  document.getElementById('voice-player').classList.remove('open');
+  resetPlayerUI();
+}
+
+function resetPlayerUI(){
+  setState('idle');
+  showMicArea(true);
+  el('vp-phrase').style.display='none';
+  el('vp-confirm-area').style.display='none';
+  el('vp-dur-area').style.display='none';
+  el('vp-steps').style.display='none';
+  el('vp-close-area').style.display='none';
+  el('vp-activity-grid').style.display='none';
+  el('vp-playback').style.display='none';
+  el('vp-hint').style.display='';
+  el('vp-state-text').textContent='Tap the orb to begin';
+  el('vp-transcript').textContent='';
+  el('vp-session-name').textContent='Everyday Mettā';
+  el('ctrl-pause').textContent='⏸';
+  el('vp-mic-wrap').classList.remove('listening');
+  el('vp-orb-core').classList.remove('listening');
+}
+
+function showMicArea(show){
+  el('vp-mic-area').style.display=show?'':'none';
+  el('vp-guide-area').style.display=show?'none':'';
+}
+
+function el(id){return document.getElementById(id);}
+
+// ─── Background glow per activity ───
+const ACTIVITY_COLORS={
+  eating:      ['#4CAF80','#2D7A55',0.12],
+  coffee_tea:  ['#C8943C','#7A5520',0.12],
+  cooking:     ['#E07070','#8A3030',0.10],
+  traffic:     ['#6090E0','#305090',0.10],
+  waiting:     ['#E0B040','#8A7020',0.10],
+  walking:     ['#4CAF80','#2D7A55',0.10],
+  cleaning:    ['#6BAD8A','#3D7A5A',0.10],
+  starting_work:['#9090D0','#505090',0.10]
+};
+
+function setPlayerBg(actId){
+  const bg=el('vp-bg');
+  if(!actId){
+    bg.style.background=`radial-gradient(ellipse 80% 60% at 20% 20%, rgba(76,175,128,0.08) 0%, transparent 70%), var(--bg)`;
+    return;
+  }
+  const c=ACTIVITY_COLORS[actId]||ACTIVITY_COLORS.eating;
+  bg.style.background=`radial-gradient(ellipse 100% 80% at 30% 20%, rgba(${hexRgb(c[0])},${c[2]}) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 80%, rgba(${hexRgb(c[1])},0.08) 0%, transparent 60%), var(--bg)`;
+
+  // Update orb colors
+  const grad=`radial-gradient(circle, ${c[0]} 0%, ${c[1]} 60%, #0D1410 100%)`;
+  el('vp-orb-inner').style.background=grad;
+  el('vp-orb-inner').style.boxShadow=`0 0 50px rgba(${hexRgb(c[0])},0.3)`;
+  el('guide-orb-inner').style.background=grad;
+  el('guide-orb-inner').style.boxShadow=`0 0 60px rgba(${hexRgb(c[0])},0.35)`;
+
+  // Dots active color
+  document.documentElement.style.setProperty('--metta',c[0]);
+}
+
+function hexRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+// ─── Phrase display ───
+function showPhrase(text,visible=true){
+  const box=el('vp-phrase');
+  const txt=el('vp-phrase-text');
+  if(!visible){box.style.display='none';return;}
+  box.style.display='flex';
+  txt.classList.remove('visible');
+  setTimeout(()=>{txt.textContent=text;txt.classList.add('visible');},150);
+}
+
+// ─── Set mic listening state ───
+function setListening(on){
+  const wrap=el('vp-mic-wrap');
+  const core=el('vp-orb-core');
+  if(on){wrap.classList.add('listening');core.classList.add('listening');}
+  else{wrap.classList.remove('listening');core.classList.remove('listening');}
+}
+
+// ─── STATE HANDLERS ───
+async function startVoiceSession(){
+  openPlayer();
+  await delay(200);
+  await doAskActivity();
+}
+
+async function doAskActivity(){
+  setState('ask_activity');
+  showMicArea(true);
+  el('vp-session-name').textContent='What are you doing?';
+  el('vp-phrase').style.display='none';
+  el('vp-confirm-area').style.display='none';
+  el('vp-dur-area').style.display='none';
+  el('vp-close-area').style.display='none';
+  el('vp-steps').style.display='none';
+  el('vp-playback').style.display='none';
+  el('vp-hint').style.display='';
+  el('ctrl-pause').textContent='⏸';
+
+  if(!speechAvailable){
+    el('vp-activity-grid').style.display='';
+    el('vp-state-text').textContent='Choose your activity';
+    el('vp-hint').style.display='none';
+    return;
+  }
+  el('vp-activity-grid').style.display='none';
+  el('vp-state-text').textContent='Tap the orb to speak';
+  el('vp-transcript').textContent='';
+  // Auto-speak the question then listen
+  await speakText({text:"What are you doing right now?",filename:"prompt_what_are_you_doing.mp3",pause:2});
+  await listenForActivity();
+}
+
+async function listenForActivity(){
+  if(!speechAvailable)return;
+  setListening(true);
+  el('vp-state-text').textContent='Listening…';
+  const t=await listenOnce(interim=>el('vp-transcript').textContent=interim);
+  setListening(false);
+  el('vp-transcript').textContent='';
+  if(!t){
+    el('vp-state-text').textContent="Didn't catch that — tap to try again";
+    return;
+  }
+  el('vp-state-text').textContent='';
+  processActivity(t);
+}
+
+async function processActivity(t){
+  const result=parseActivity(t);
+  if(!result){
+    el('vp-state-text').textContent="Say eating, tea, cooking, traffic, waiting, walking, cleaning, or starting work.";
+    await speakText({text:"I didn't catch that. Say eating, tea, cooking, traffic, waiting, walking, cleaning, or starting work.",filename:"prompt_didnt_catch.mp3",pause:2});
+    return;
+  }
+  if(result.confidence<0.9){
+    await doConfirm(result);
+  } else {
+    await doSelectActivity(result.id);
+  }
+}
+
+async function doConfirm(result){
+  currentActivity=result.id;
+  setState('confirm_activity');
+  setPlayerBg(result.id);
+  el('vp-session-name').textContent=PRACTICES[result.id].icon+' '+PRACTICES[result.id].label;
+  showPhrase(`I heard ${result.label}. Is that right?`);
+  el('vp-confirm-area').style.display='';
+  el('vp-hint').style.display='none';
+  el('vp-state-text').textContent='Tap yes or no, or speak';
+  await speakText({text:`I heard ${result.label}. Is that right?`,filename:`confirm_${result.id}.mp3`,pause:2});
+  if(speechAvailable){
+    setListening(true);
+    const t=await listenOnce(interim=>el('vp-transcript').textContent=interim);
+    setListening(false);
+    el('vp-transcript').textContent='';
+    if(t){
+      const intent=parseControl(t);
+      if(intent==='yes'){el('vp-confirm-area').style.display='none';doSelectActivity(result.id);return;}
+      if(intent==='no') {el('vp-confirm-area').style.display='none';doAskActivity();return;}
+    }
+  }
+}
+
+async function doSelectActivity(key){
+  currentActivity=key;
+  const p=PRACTICES[key];
+  setPlayerBg(key);
+  setState('ask_duration');
+  el('vp-confirm-area').style.display='none';
+  el('vp-activity-grid').style.display='none';
+  el('vp-session-name').textContent=p.icon+' '+p.label;
+  showPhrase('Short practice or two minutes?');
+  el('vp-dur-area').style.display='';
+  el('vp-hint').style.display='none';
+  el('vp-state-text').textContent='Choose or speak your preference';
+  await speakText({text:"Short practice or two minutes?",filename:"prompt_short_or_long.mp3",pause:2});
+  if(speechAvailable){
+    setListening(true);
+    const t=await listenOnce(interim=>el('vp-transcript').textContent=interim);
+    setListening(false);
+    el('vp-transcript').textContent='';
+    if(t){
+      const intent=parseControl(t);
+      if(intent==='short'){el('vp-dur-area').style.display='none';startPractice('short');return;}
+      if(intent==='long') {el('vp-dur-area').style.display='none';startPractice('long');return;}
+    }
+    el('vp-state-text').textContent='Tap short or longer above';
+  }
+}
+
+// ─── Practice Engine ───
+async function startPractice(duration){
+  currentDuration=duration;
+  const p=PRACTICES[currentActivity];
+  guideScript=p[duration];
+  guideIndex=0;
+  guideRunning=true;
+  guidePaused=false;
+
+  setState('guiding');
+  showMicArea(false);
+  el('vp-dur-area').style.display='none';
+  el('vp-confirm-area').style.display='none';
+  el('vp-phrase').style.display='flex';
+  el('vp-steps').style.display='flex';
+  el('vp-playback').style.display='flex';
+  el('vp-hint').style.display='none';
+  el('ctrl-pause').textContent='⏸';
+  el('vp-state-text').textContent=duration==='short'?'~30 seconds':'~2 minutes';
+  el('vp-session-name').textContent=p.icon+' '+p.label+' · '+(duration==='short'?'Short':'Full');
+
+  // Build progress dots
+  const stepsEl=el('vp-steps');
+  stepsEl.innerHTML='';
+  guideScript.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='vp-dot';d.id=`dot-${i}`;stepsEl.appendChild(d);
+  });
+
+  runGuide();
+}
+
+async function runGuide(){
+  while(guideIndex<guideScript.length&&guideRunning){
+    const seg=guideScript[guideIndex];
+    updateDots(guideIndex);
+    showPhrase(typeof seg==='object'?seg.text:seg);
+    await speakText(seg);
+    if(!guideRunning)break;
+    while(guidePaused){await delay(200);}
+    guideIndex++;
+  }
+  if(guideRunning){guideRunning=false;await delay(600);showClose();}
+}
+
+function updateDots(idx){
+  guideScript.forEach((_,i)=>{
+    const d=document.getElementById(`dot-${i}`);
+    if(!d)return;
+    d.className='vp-dot'+(i<idx?' done':i===idx?' current':'');
+  });
+}
+
+async function showClose(){
+  setState('closing');
+  showMicArea(false);
+  el('vp-phrase').style.display='none';
+  el('vp-steps').style.display='none';
+  el('vp-playback').style.display='none';
+  el('vp-close-area').style.display='';
+  el('vp-state-text').textContent='Practice complete';
+  el('vp-session-name').textContent='Everyday Mettā';
+  setPlayerBg(null);
+  await speakText({text:"Another one, reflect, or finish?",filename:"prompt_end_choice.mp3",pause:2});
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ═══════════════════════════════════════════════════
+// BUILD HOME ACTIVITY CARDS
+// ═══════════════════════════════════════════════════
+function buildHomeCards(){
+  const container=document.getElementById('home-act-cards');
+  container.innerHTML='';
+  Object.entries(PRACTICES).forEach(([key,p])=>{
+    const card=document.createElement('div');
+    card.className='act-card';
+    card.innerHTML=`
+      <div class="act-orb">${p.icon}</div>
+      <div class="act-info">
+        <div class="act-name">${p.label}</div>
+        <div class="act-desc">${p.desc}</div>
+      </div>
+      <div class="act-play">▶</div>`;
+    card.addEventListener('click',()=>{
+      openPlayer();
+      setTimeout(()=>doSelectActivity(key),200);
+    });
+    container.appendChild(card);
+  });
+}
+
+function buildBrowseGrid(){
+  const grid=document.getElementById('vp-browse-grid');
+  grid.innerHTML='';
+  Object.entries(PRACTICES).forEach(([key,p])=>{
+    const card=document.createElement('div');
+    card.className='bg-card';
+    card.innerHTML=`<div class="bg-icon">${p.icon}</div><div class="bg-name">${p.label}</div><div class="bg-desc">${p.desc}</div>`;
+    card.addEventListener('click',()=>doSelectActivity(key));
+    grid.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════
+
+// Onboarding
+document.getElementById('ob-enter-btn').addEventListener('click',()=>{
+  document.getElementById('onboard').style.display='none';
+  document.getElementById('main').style.display='block';
+});
+
+// Home → voice
+document.getElementById('home-voice-btn').addEventListener('click',()=>startVoiceSession());
+
+// Orb tap (in ask/confirm states = listen again)
+el('vp-mic-wrap').addEventListener('click',()=>{
+  if(STATE==='ask_activity'){
+    stopSpeaking();
+    listenForActivity();
+  }
+});
+
+// Close button
+el('vp-close-btn').addEventListener('click',()=>{
+  guideRunning=false;
+  closePlayer();
+});
+
+// Confirm buttons
+el('conf-yes').addEventListener('click',()=>{
+  stopSpeaking();
+  el('vp-confirm-area').style.display='none';
+  doSelectActivity(currentActivity);
+});
+el('conf-no').addEventListener('click',()=>{
+  stopSpeaking();
+  el('vp-confirm-area').style.display='none';
+  doAskActivity();
+});
+
+// Duration
+el('dur-short').addEventListener('click',()=>{stopSpeaking();el('vp-dur-area').style.display='none';startPractice('short');});
+el('dur-long').addEventListener('click',()=>{stopSpeaking();el('vp-dur-area').style.display='none';startPractice('long');});
+
+// Playback controls
+el('ctrl-pause').addEventListener('click',()=>{
+  if(guidePaused||isPaused){
+    guidePaused=false;resumeSpeaking();
+    el('ctrl-pause').textContent='⏸';
+  } else {
+    guidePaused=true;pauseSpeaking();
+    el('ctrl-pause').textContent='▶';
+  }
+});
+el('ctrl-repeat').addEventListener('click',()=>{
+  if(guideIndex>0)guideIndex--;
+  stopSpeaking();guidePaused=false;guideRunning=true;
+  runGuide();
+});
+el('ctrl-stop').addEventListener('click',()=>{
+  guideRunning=false;stopSpeaking();
+  showClose();
+});
+
+// Closing
+el('close-another').addEventListener('click',()=>{stopSpeaking();doAskActivity();});
+el('close-repeat').addEventListener('click',()=>{stopSpeaking();startPractice(currentDuration);});
+el('close-finish').addEventListener('click',()=>{guideRunning=false;closePlayer();});
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+buildHomeCards();
+buildBrowseGrid();
+
+// Warm up speech synthesis
+if(window.speechSynthesis){
+  const d=new SpeechSynthesisUtterance('');d.volume=0;
+  window.speechSynthesis.speak(d);
+}
+</script>
+</body>
+</html>

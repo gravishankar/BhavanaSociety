@@ -1,0 +1,589 @@
+# Everyday Mettā — Complete Voice Script
+# For Chatterbox TTS · Bhavana Society Tradition
+# Generated for: M4 Max · Calm, unhurried pace · rate ≈ 0.88 · pitch ≈ 0.95
+#
+# FORMAT: Each line = one audio file to generate
+# FILE NAMING CONVENTION: <category>_<slug>.wav
+# Recommended voice style: warm, measured, slight reverence — like Bhante G's gentle cadence
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+# ═══════════════════════════════════════════════════
+# 01. SYSTEM PROMPTS  (UI navigation phrases)
+# ═══════════════════════════════════════════════════
+
+prompt_what_are_you_doing.wav
+What are you doing right now?
+
+prompt_short_or_long.wav
+Short practice, or two minutes?
+
+prompt_end_choice.wav
+Another one, reflect, or finish?
+
+prompt_didnt_catch.wav
+I didn't catch that. Say eating, tea, cooking, traffic, waiting, walking, cleaning, or starting work.
+
+
+# ═══════════════════════════════════════════════════
+# 02. CONFIRMATION PROMPTS  (low-confidence matches)
+# ═══════════════════════════════════════════════════
+
+confirm_eating.wav
+I heard eating. Is that right?
+
+confirm_coffee_tea.wav
+I heard tea or coffee. Is that right?
+
+confirm_cooking.wav
+I heard cooking. Is that right?
+
+confirm_traffic.wav
+I heard traffic or commuting. Is that right?
+
+confirm_waiting.wav
+I heard waiting. Is that right?
+
+confirm_walking.wav
+I heard walking. Is that right?
+
+confirm_cleaning.wav
+I heard cleaning. Is that right?
+
+confirm_starting_work.wav
+I heard starting work. Is that right?
+
+
+# ═══════════════════════════════════════════════════
+# 03. EATING — Short  (~30 seconds)
+# ═══════════════════════════════════════════════════
+
+eating_short_01.wav
+Before the first bite, pause.
+
+eating_short_02.wav
+This food traveled far to reach you.
+
+eating_short_03.wav
+Many hands planted, picked, packed, and prepared it.
+
+eating_short_04.wav
+May they be safe.
+
+eating_short_05.wav
+May they be nourished.
+
+eating_short_06.wav
+May they live with ease.
+
+
+# ═══════════════════════════════════════════════════
+# 04. EATING — Long  (~2 minutes)
+# ═══════════════════════════════════════════════════
+
+eating_long_01.wav
+Before eating, pause for a moment.
+
+eating_long_02.wav
+This meal did not begin in your kitchen.
+
+eating_long_03.wav
+It began in soil, in sun, in rain, in effort.
+
+eating_long_04.wav
+Farmers rose early. Workers loaded trucks in the dark.
+
+eating_long_05.wav
+Someone stocked the shelves. Someone cooked with care.
+
+eating_long_06.wav
+Hold all of them gently in your mind.
+
+eating_long_07.wav
+May they be safe.
+
+eating_long_08.wav
+May they be healthy.
+
+eating_long_09.wav
+May they be peaceful.
+
+eating_long_10.wav
+May they live with ease.
+
+eating_long_11.wav
+Eat with gratitude.
+
+
+# ═══════════════════════════════════════════════════
+# 05. COFFEE OR TEA — Short  (~30 seconds)
+# ═══════════════════════════════════════════════════
+
+coffee_tea_short_01.wav
+Before the first sip, pause.
+
+coffee_tea_short_02.wav
+This comfort reached you through many hands.
+
+coffee_tea_short_03.wav
+Remember the farmers, pickers, drivers, and sellers.
+
+coffee_tea_short_04.wav
+May they be safe.
+
+coffee_tea_short_05.wav
+May they be healthy.
+
+coffee_tea_short_06.wav
+May they live with ease.
+
+
+# ═══════════════════════════════════════════════════
+# 06. COFFEE OR TEA — Long  (~2 minutes)
+# ═══════════════════════════════════════════════════
+
+coffee_tea_long_01.wav
+Before the first sip, pause.
+
+coffee_tea_long_02.wav
+This drink did not begin here.
+
+coffee_tea_long_03.wav
+Many people worked in heat, rain, effort, and distance.
+
+coffee_tea_long_04.wav
+This warmth has come to you through their labor.
+
+coffee_tea_long_05.wav
+Remember the farmers, harvesters, drivers, roasters, and sellers.
+
+coffee_tea_long_06.wav
+May they be safe.
+
+coffee_tea_long_07.wav
+May they be healthy.
+
+coffee_tea_long_08.wav
+May they be peaceful.
+
+coffee_tea_long_09.wav
+May their lives unfold with ease.
+
+coffee_tea_long_10.wav
+Drink with gratitude.
+
+
+# ═══════════════════════════════════════════════════
+# 07. COOKING — Short  (~30 seconds)
+# ═══════════════════════════════════════════════════
+
+cooking_short_01.wav
+As you cook, pause.
+
+cooking_short_02.wav
+These hands are acts of care.
+
+cooking_short_03.wav
+Someone will receive this nourishment.
+
+cooking_short_04.wav
+May they be well.
+
+cooking_short_05.wav
+May this food bring them ease.
+
+cooking_short_06.wav
+May you be at peace as you prepare it.
+
+
+# ═══════════════════════════════════════════════════
+# 08. COOKING — Long  (~2 minutes)
+# ═══════════════════════════════════════════════════
+
+cooking_long_01.wav
+As your hands move through this work, pause.
+
+cooking_long_02.wav
+Cooking is one of the oldest forms of love.
+
+cooking_long_03.wav
+You are turning simple ingredients into nourishment.
+
+cooking_long_04.wav
+Think of those who will eat what you prepare.
+
+cooking_long_05.wav
+And those who cannot cook tonight.
+
+cooking_long_06.wav
+And those who go without.
+
+cooking_long_07.wav
+May all beings be nourished.
+
+cooking_long_08.wav
+May you find ease in this work.
+
+cooking_long_09.wav
+May those who eat feel cared for.
+
+cooking_long_10.wav
+May they be well.
+
+cooking_long_11.wav
+May they be at peace.
+
+cooking_long_12.wav
+May they live with ease.
+
+
+# ═══════════════════════════════════════════════════
+# 09. TRAFFIC OR COMMUTE — Short  (~30 seconds)
+# ═══════════════════════════════════════════════════
+
+traffic_short_01.wav
+At this moment, pause.
+
+traffic_short_02.wav
+Everyone around you wants to get somewhere safe.
+
+traffic_short_03.wav
+Everyone is carrying something.
+
+traffic_short_04.wav
+May these travelers be safe.
+
+traffic_short_05.wav
+May they reach where they need to go in peace.
+
+traffic_short_06.wav
+May you arrive with ease.
+
+
+# ═══════════════════════════════════════════════════
+# 10. TRAFFIC OR COMMUTE — Long  (~2 minutes)
+# ═══════════════════════════════════════════════════
+
+traffic_long_01.wav
+In this delay, pause.
+
+traffic_long_02.wav
+Every car around you holds a life.
+
+traffic_long_03.wav
+Someone is late and worried.
+
+traffic_long_04.wav
+Someone is tired.
+
+traffic_long_05.wav
+Someone is on the way to something they love.
+
+traffic_long_06.wav
+Someone is driving toward a hard day.
+
+traffic_long_07.wav
+We are all trying to move through this world.
+
+traffic_long_08.wav
+May all these travelers be safe.
+
+traffic_long_09.wav
+May they be free from stress.
+
+traffic_long_10.wav
+May they be peaceful.
+
+traffic_long_11.wav
+May they reach where they need to go with ease.
+
+traffic_long_12.wav
+May you too arrive safely and at peace.
+
+
+# ═══════════════════════════════════════════════════
+# 11. WAITING IN LINE — Short  (~30 seconds)
+# ═══════════════════════════════════════════════════
+
+waiting_short_01.wav
+This pause is unexpected.
+
+waiting_short_02.wav
+Let it be a practice.
+
+waiting_short_03.wav
+Everyone here is waiting too.
+
+waiting_short_04.wav
+May they be patient and at ease.
+
+waiting_short_05.wav
+May you be patient and at ease.
+
+waiting_short_06.wav
+May this moment soften.
+
+
+# ═══════════════════════════════════════════════════
+# 12. WAITING IN LINE — Long  (~2 minutes)
+# ═══════════════════════════════════════════════════
+
+waiting_long_01.wav
+You did not plan for this wait.
+
+waiting_long_02.wav
+And yet here it is.
+
+waiting_long_03.wav
+Look around at the others waiting.
+
+waiting_long_04.wav
+Each of them has somewhere to be.
+
+waiting_long_05.wav
+Each has things weighing on them today.
+
+waiting_long_06.wav
+We are briefly sharing this small inconvenience.
+
+waiting_long_07.wav
+May each person here be well.
+
+waiting_long_08.wav
+May they feel a little lighter.
+
+waiting_long_09.wav
+May impatience soften into presence.
+
+waiting_long_10.wav
+May you and everyone here be at peace.
+
+waiting_long_11.wav
+May this moment be enough.
+
+
+# ═══════════════════════════════════════════════════
+# 13. WALKING — Short  (~30 seconds)
+# ═══════════════════════════════════════════════════
+
+walking_short_01.wav
+With each step, a quiet wish.
+
+walking_short_02.wav
+Notice the people you pass.
+
+walking_short_03.wav
+Each one wants to be happy and free from harm.
+
+walking_short_04.wav
+May they be safe.
+
+walking_short_05.wav
+May they be well.
+
+walking_short_06.wav
+May they move through today with ease.
+
+
+# ═══════════════════════════════════════════════════
+# 14. WALKING — Long  (~2 minutes)
+# ═══════════════════════════════════════════════════
+
+walking_long_01.wav
+As your feet meet the ground, pause inwardly.
+
+walking_long_02.wav
+You are moving through a world full of lives.
+
+walking_long_03.wav
+The person ahead of you has worries and joys.
+
+walking_long_04.wav
+The person behind you does too.
+
+walking_long_05.wav
+With each step, extend a quiet wish.
+
+walking_long_06.wav
+May the people I pass be safe.
+
+walking_long_07.wav
+May they be healthy and strong.
+
+walking_long_08.wav
+May they know peace today.
+
+walking_long_09.wav
+May they find ease in ordinary moments.
+
+walking_long_10.wav
+May you too feel the ground beneath you.
+
+walking_long_11.wav
+May you walk with care and without fear.
+
+walking_long_12.wav
+May this journey hold something good.
+
+
+# ═══════════════════════════════════════════════════
+# 15. CLEANING — Short  (~30 seconds)
+# ═══════════════════════════════════════════════════
+
+cleaning_short_01.wav
+As you clean, pause.
+
+cleaning_short_02.wav
+This work is an act of care.
+
+cleaning_short_03.wav
+Others will move through this space.
+
+cleaning_short_04.wav
+May they feel ease here.
+
+cleaning_short_05.wav
+May this home be a place of peace.
+
+cleaning_short_06.wav
+May all who enter be well.
+
+
+# ═══════════════════════════════════════════════════
+# 16. CLEANING — Long  (~2 minutes)
+# ═══════════════════════════════════════════════════
+
+cleaning_long_01.wav
+Cleaning is quiet, unglamorous care.
+
+cleaning_long_02.wav
+And yet it matters.
+
+cleaning_long_03.wav
+As your hands work, let the mind open.
+
+cleaning_long_04.wav
+Think of those who will use this space.
+
+cleaning_long_05.wav
+Think of those who clean spaces they will never inhabit.
+
+cleaning_long_06.wav
+Workers who clean offices, hospitals, and homes unseen.
+
+cleaning_long_07.wav
+May they be respected.
+
+cleaning_long_08.wav
+May their labor be honored.
+
+cleaning_long_09.wav
+May this space hold peace for all who enter it.
+
+cleaning_long_10.wav
+May those who rest here feel ease.
+
+cleaning_long_11.wav
+May your own effort today be enough.
+
+cleaning_long_12.wav
+May you find satisfaction in this care.
+
+
+# ═══════════════════════════════════════════════════
+# 17. STARTING WORK — Short  (~30 seconds)
+# ═══════════════════════════════════════════════════
+
+starting_work_short_01.wav
+Before the first task, pause.
+
+starting_work_short_02.wav
+Set a quiet intention.
+
+starting_work_short_03.wav
+May my work today cause no harm.
+
+starting_work_short_04.wav
+May it bring some good.
+
+starting_work_short_05.wav
+May I meet others with patience.
+
+starting_work_short_06.wav
+May this day unfold with ease.
+
+
+# ═══════════════════════════════════════════════════
+# 18. STARTING WORK — Long  (~2 minutes)
+# ═══════════════════════════════════════════════════
+
+starting_work_long_01.wav
+Before you open the first message, pause.
+
+starting_work_long_02.wav
+You are about to enter a day of effort and attention.
+
+starting_work_long_03.wav
+There will be small frustrations.
+
+starting_work_long_04.wav
+There will be moments of connection.
+
+starting_work_long_05.wav
+You will affect others through your words and actions today.
+
+starting_work_long_06.wav
+Set a quiet intention now.
+
+starting_work_long_07.wav
+May my work cause no harm.
+
+starting_work_long_08.wav
+May it offer something of value.
+
+starting_work_long_09.wav
+May I listen more than I react.
+
+starting_work_long_10.wav
+May I meet difficulty with patience.
+
+starting_work_long_11.wav
+May those I work with be well.
+
+starting_work_long_12.wav
+May this day, in some small way, be good.
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SUMMARY
+# ─────────────────────────────────────────────────────────────────────────────
+# Total files to generate: 121
+#
+#   System prompts:        4
+#   Confirmation prompts:  8
+#   Eating short:          6   / long: 11
+#   Coffee/Tea short:      6   / long: 10
+#   Cooking short:         6   / long: 12
+#   Traffic short:         6   / long: 12
+#   Waiting short:         6   / long: 11
+#   Walking short:         6   / long: 12
+#   Cleaning short:        6   / long: 12
+#   Starting Work short:   6   / long: 12
+#
+# CHATTERBOX SUGGESTED SETTINGS (for M4 Max):
+#   --exaggeration 0.3      (calm, non-theatrical)
+#   --cfg_weight   0.5      (balanced adherence)
+#   --temperature  0.7      (slight warmth, not robotic)
+#
+# VOICE PROMPT SUGGESTION:
+#   Use a 10–15 second reference clip of a calm, warm, measured speaker.
+#   Bhante Gunaratana's YouTube recordings at bhavanasociety.org work well as
+#   reference audio for the voice profile.
+#
+# SUGGESTED BATCH COMMAND (once you have a voice reference):
+#   for line in $(grep '\.wav$' voice-script.txt); do
+#     text=$(grep -A1 "$line" voice-script.txt | tail -1)
+#     chatterbox --text "$text" --output audio/$line \
+#                --exaggeration 0.3 --cfg_weight 0.5
+#   done
+# ─────────────────────────────────────────────────────────────────────────────
