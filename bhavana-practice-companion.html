@@ -866,6 +866,7 @@ var PHASES = {
   sitting: {
     id:'sitting', label:'Sitting', color:'#6BAD8A', dark:'#3D7A5A', rgb:'107,173,138',
     sym:'🪷', bg:'#0D1A12', action:'Breathe in', sub:'return to this',
+    loop:true,
     mins:20,
     phrase:'Rest the attention lightly on the breath. When the mind wanders, gently return — without judgment, without struggle.',
     guided:[
@@ -903,6 +904,7 @@ var PHASES = {
   walking: {
     id:'walking', label:'Walking', color:'#C8943C', dark:'#8A6020', rgb:'200,148,60',
     sym:'🚶', bg:'#1A1200', action:'Lifting · Moving · Placing', sub:'step by step',
+    loop:true,
     mins:20,
     phrase:'Lifting... moving... placing. With each step, the mind returns to this body, this moment, this ground beneath you.',
     guided:[
@@ -1132,12 +1134,19 @@ function stopSpeech(resetIdx) {
   if (resetIdx) { guidedSegIdx = 0; currentGuidedSegments = null; }
 }
 
-function runGuidedScript(segments, startIdx) {
+function runGuidedScript(segments, startIdx, loop) {
   currentGuidedSegments = segments;
   guidedSegIdx = startIdx || 0;
   function nextSeg() {
     if (!timerRunning) return;
-    if (guidedSegIdx >= segments.length) return;
+    if (guidedSegIdx >= segments.length) {
+      if (loop) {
+        // After a full cycle, rest in silence for 30 seconds then repeat
+        guidedSegIdx = 0;
+        guidedTimeout = setTimeout(nextSeg, 30000);
+      }
+      return;
+    }
     var seg = segments[guidedSegIdx++];
     var el = document.getElementById('pl-phrase');
     if (el) el.textContent = seg.text;
@@ -1151,16 +1160,19 @@ function runGuidedScript(segments, startIdx) {
   guidedTimeout = setTimeout(nextSeg, startIdx ? 800 : 2200);
 }
 
+var currentPhaseLoop = false;  // whether the active phase should loop its script
+
 function startPhaseAudio(ph) {
   stopSpeech(true);  // full reset — new phase
   if (!timerRunning) return;
+  currentPhaseLoop = !!ph.loop;
   // Set immediately so pause during opening silence knows where to resume
   if (ph.guided) currentGuidedSegments = ph.guided;
   var freqs = {settle:440, sitting:432, walking_intro:396, walking:396, close:440};
   playBowl(freqs[ph.id] || 432, 5, 0.18);
   if (ph.guided && voiceEnabled) {
     speakTimeout = setTimeout(function() {
-      if (timerRunning) runGuidedScript(ph.guided, 0);
+      if (timerRunning) runGuidedScript(ph.guided, 0, currentPhaseLoop);
     }, 3000);
   }
 }
@@ -1168,7 +1180,11 @@ function startPhaseAudio(ph) {
 function resumeGuidedScript() {
   if (!voiceEnabled) return;
   if (currentGuidedSegments && guidedSegIdx < currentGuidedSegments.length) {
-    runGuidedScript(currentGuidedSegments, guidedSegIdx);
+    runGuidedScript(currentGuidedSegments, guidedSegIdx, currentPhaseLoop);
+  } else if (currentGuidedSegments && currentPhaseLoop) {
+    // Resumed during the inter-cycle silence — restart from beginning
+    guidedSegIdx = 0;
+    runGuidedScript(currentGuidedSegments, 0, currentPhaseLoop);
   }
 }
 
