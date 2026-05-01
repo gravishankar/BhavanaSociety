@@ -1015,6 +1015,23 @@ var guidedSegIdx  = 0;
 var guidedTimeout = null;
 var speakTimeout  = null;
 var timerRunning  = false;
+var audioCache    = {};  // filename → Audio object, preloaded
+
+// Preload all MP3s for a set of phases into audioCache so network
+// hiccups mid-session don't trigger the Web Speech fallback.
+function preloadPhaseAudio(phaseIds) {
+  phaseIds.forEach(function(id) {
+    var ph = PHASES[id];
+    if (!ph || !ph.guided) return;
+    ph.guided.forEach(function(seg) {
+      if (seg.filename && !audioCache[seg.filename]) {
+        var a = new Audio(AUDIO_PATH + seg.filename);
+        a.preload = 'auto';
+        audioCache[seg.filename] = a;
+      }
+    });
+  });
+}
 
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1074,10 +1091,29 @@ function playSegment(seg, onEnd) {
   stopCurrentAudio();
 
   if (seg.filename) {
-    var audio = new Audio(AUDIO_PATH + seg.filename);
+    // Use preloaded Audio object if available, otherwise create fresh
+    var audio = audioCache[seg.filename] || new Audio(AUDIO_PATH + seg.filename);
+    // Reset to start in case it was played before (cache reuse)
+    try { audio.currentTime = 0; } catch(e) {}
     audio.volume = 0.90;
-    audio.addEventListener('ended', function(){ currentAudio = null; if (onEnd) onEnd(); });
-    audio.addEventListener('error', function(){ currentAudio = null; speakFallback(seg.text, onEnd); });
+
+    var ended = false;
+    function done() { if (!ended) { ended = true; currentAudio = null; if (onEnd) onEnd(); } }
+
+    audio.addEventListener('ended', done);
+    audio.addEventListener('error', function(e) {
+      // Only fall back to Web Speech for genuine src/decode failures (codes 3, 4).
+      // Code 2 (network) can be a transient stall on GitHub Pages — skip silently.
+      var code = e.target && e.target.error && e.target.error.code;
+      currentAudio = null;
+      if (code === 3 || code === 4) {
+        speakFallback(seg.text, onEnd);
+      } else {
+        // Transient network error — skip this segment and continue
+        if (onEnd) onEnd();
+      }
+    });
+
     var p = audio.play();
     if (p !== undefined) {
       p.then(function(){ currentAudio = audio; })
@@ -1206,6 +1242,9 @@ function openPlayer(mode) {
   document.getElementById('player-screen').classList.add('open');
   buildStepDots();
   loadPhase(0);
+  // Preload all MP3s for this session upfront so mid-session network
+  // hiccups don't trigger the Web Speech fallback
+  preloadPhaseAudio(playerPhaseIds);
   document.getElementById('pc-main-btn').textContent = '▶';
   if (window.speechSynthesis) {
     window.speechSynthesis.getVoices();
