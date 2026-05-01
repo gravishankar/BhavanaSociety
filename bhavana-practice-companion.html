@@ -1089,6 +1089,8 @@ function speakFallback(text, onEnd) {
 function playSegment(seg, onEnd) {
   if (!voiceEnabled) { if (onEnd) onEnd(); return; }
   stopCurrentAudio();
+  // Kill any stale Web Speech utterance before playing an MP3
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
 
   if (seg.filename) {
     // Use preloaded Audio object if available, otherwise create fresh
@@ -1189,6 +1191,8 @@ function runGuidedScript(segments, startIdx) {
 
 function startPhaseAudio(ph) {
   stopSpeech(true);  // full reset — new phase
+  // Hard-cancel any queued Web Speech utterances before starting MP3 playback
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
   if (!timerRunning) return;
   // Set immediately so pause during opening silence knows where to resume
   if (ph.guided) currentGuidedSegments = ph.guided;
@@ -1246,9 +1250,11 @@ function openPlayer(mode) {
   // hiccups don't trigger the Web Speech fallback
   preloadPhaseAudio(playerPhaseIds);
   document.getElementById('pc-main-btn').textContent = '▶';
+  // Pre-fetch voices list only — do NOT speak even an empty utterance;
+  // Safari queues it and can replay it later, causing spurious robot voice
   if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
     window.speechSynthesis.getVoices();
-    var d = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(d); window.speechSynthesis.cancel();
   }
 }
 
