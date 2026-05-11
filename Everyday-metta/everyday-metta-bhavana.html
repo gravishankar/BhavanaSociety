@@ -1193,7 +1193,9 @@ async function listenForActivity(){
   setListening(false);
   el('vp-transcript').textContent='';
   if(!t){
-    el('vp-state-text').textContent="Didn't catch that — tap to try again";
+    el('vp-state-text').textContent="Didn't catch that — listening again…";
+    await delay(1200);
+    if(STATE==='ask_activity')listenForActivity();
     return;
   }
   el('vp-state-text').textContent='';
@@ -1328,6 +1330,20 @@ async function showClose(){
   el('vp-session-name').textContent='Everyday Mettā';
   setPlayerBg(null);
   await speakText({text:"Another one, reflect, or finish?",filename:"prompt_end_choice.mp3",pause:2});
+  if(speechAvailable&&STATE==='closing'){
+    setListening(true);
+    el('vp-state-text').textContent='Listening…';
+    const t=await listenOnce(interim=>el('vp-transcript').textContent=interim);
+    setListening(false);
+    el('vp-transcript').textContent='';
+    if(t&&STATE==='closing'){
+      const intent=parseControl(t);
+      if(intent==='stop'){guideRunning=false;closePlayer();return;}
+      if(intent==='repeat'){startPractice(currentDuration);return;}
+      // any other speech = another practice
+      doAskActivity();
+    }
+  }
 }
 
 function delay(ms){return new Promise(r=>setTimeout(r,ms));}
