@@ -1,8 +1,8 @@
-const CACHE_NAME = 'bhavana-practice-v6';
+const CACHE_NAME = 'bhavana-practice-v7';
 const ASSETS = [
   './',
   './index.html',
-  './bhavana-practice-companion.html',
+  './Everyday-metta/everyday-metta-bhavana.html',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png'
