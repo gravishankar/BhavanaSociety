@@ -1032,7 +1032,6 @@ function listenOnce(onInterim){
       activeRecognition=null;
       res(val);
     }
-    const timeout=setTimeout(()=>settle(final),12000);
     rec.onresult=e=>{
       if(!ready)return; // discard anything captured before the delay
       let interim='';
@@ -1043,16 +1042,15 @@ function listenOnce(onInterim){
       }
       if(onInterim)onInterim(final||interim);
     };
-    rec.onend=()=>{clearTimeout(timeout);settle(final);};
+    rec.onend=()=>settle(final);
     rec.onerror=e=>{
-      clearTimeout(timeout);
       if(e.error==='not-allowed'||e.error==='service-not-allowed')speechAvailable=false;
       settle('');
     };
     try{
       rec.start();
       setTimeout(()=>{ready=true;},LISTEN_DELAY);
-    }catch(e){clearTimeout(timeout);settle('');}
+    }catch(e){settle('');}
   });
 }
 
@@ -1211,20 +1209,27 @@ async function doAskActivity(){
 async function listenForActivity(){
   if(!speechAvailable)return;
   const mySession=sessionId;
-  setListening(true);
-  el('vp-state-text').textContent='Listening…';
-  const t=await listenOnce(interim=>el('vp-transcript').textContent=interim);
-  if(mySession!==sessionId)return; // stale — a new session started
-  setListening(false);
-  el('vp-transcript').textContent='';
-  if(!t){
-    el('vp-state-text').textContent="Didn't catch that — listening again…";
-    await delay(800);
-    if(STATE==='ask_activity'&&mySession===sessionId)listenForActivity();
-    return;
+  // Keep looping until we get a result or the session changes
+  while(STATE==='ask_activity'&&mySession===sessionId){
+    setListening(true);
+    el('vp-state-text').textContent='Listening…';
+    el('vp-transcript').textContent='';
+    const t=await listenOnce(interim=>{
+      if(mySession===sessionId)el('vp-transcript').textContent=interim;
+    });
+    if(mySession!==sessionId)return; // new session took over
+    el('vp-transcript').textContent='';
+    if(t){
+      setListening(false);
+      el('vp-state-text').textContent='';
+      processActivity(t);
+      return;
+    }
+    // No result — brief visual blink so user sees it restarting, then loop
+    setListening(false);
+    el('vp-state-text').textContent='Still listening…';
+    await delay(400);
   }
-  el('vp-state-text').textContent='';
-  processActivity(t);
 }
 
 async function processActivity(t){
