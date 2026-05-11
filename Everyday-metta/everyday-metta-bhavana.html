@@ -998,31 +998,24 @@ function resumeSpeaking(){
 // SPEECH INPUT
 // ═══════════════════════════════════════════════════
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let recognition=null;
 let speechAvailable=!!SR;
-let activeRecognition=null;
+let currentRecognition=null;
+
+if(speechAvailable){
+  recognition=new SR();
+  recognition.continuous=false;
+  recognition.interimResults=true;
+  recognition.maxAlternatives=3;
+  recognition.lang='en-US';
+}
 
 function listenOnce(onInterim){
   return new Promise((res)=>{
-    if(!SR){res('');return;}
-    // Always create a fresh instance — reusing after abort leaves Safari in a bad state
-    if(activeRecognition){try{activeRecognition.abort();}catch(e){} activeRecognition=null;}
-    const rec=new SR();
-    rec.continuous=false;
-    rec.interimResults=true;
-    rec.maxAlternatives=3;
-    rec.lang='en-US';
-    activeRecognition=rec;
+    if(!recognition){res('');return;}
+    try{recognition.abort();}catch(e){}
     let final='';
-    let settled=false;
-    function settle(val){
-      if(settled)return;
-      settled=true;
-      activeRecognition=null;
-      res(val);
-    }
-    // 10-second hard timeout so we never hang silently
-    const timeout=setTimeout(()=>settle(final),10000);
-    rec.onresult=e=>{
+    recognition.onresult=e=>{
       let interim='';
       for(let i=e.resultIndex;i<e.results.length;i++){
         const r=e.results[i];
@@ -1031,13 +1024,14 @@ function listenOnce(onInterim){
       }
       if(onInterim)onInterim(final||interim);
     };
-    rec.onend=()=>{clearTimeout(timeout);settle(final);};
-    rec.onerror=e=>{
-      clearTimeout(timeout);
-      if(e.error==='not-allowed'||e.error==='service-not-allowed')speechAvailable=false;
-      settle('');
+    recognition.onend=()=>res(final);
+    recognition.onerror=e=>{
+      if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+        speechAvailable=false;
+      }
+      res('');
     };
-    try{rec.start();}catch(e){clearTimeout(timeout);settle('');}
+    try{recognition.start();}catch(e){res('');}
   });
 }
 
@@ -1071,7 +1065,7 @@ function openPlayer(){
 function closePlayer(){
   stopSpeaking();
   guideRunning=false;
-  try{if(activeRecognition)activeRecognition.abort();}catch(e){}
+  try{if(recognition)recognition.abort();}catch(e){}
   document.getElementById('voice-player').classList.remove('open');
   resetPlayerUI();
 }
@@ -1394,11 +1388,10 @@ function buildBrowseGrid(){
 // EVENTS
 // ═══════════════════════════════════════════════════
 
-// Onboarding — tap goes straight into voice session (user gesture needed for mic + audio)
+// Onboarding
 document.getElementById('ob-enter-btn').addEventListener('click',()=>{
   document.getElementById('onboard').style.display='none';
   document.getElementById('main').style.display='block';
-  startVoiceSession();
 });
 
 // Home → voice
