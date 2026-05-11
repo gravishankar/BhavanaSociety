@@ -1001,22 +1001,11 @@ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let speechAvailable=!!SR;
 let activeRecognition=null;
 
-function abortRecognition(){
-  if(activeRecognition){
-    try{activeRecognition.abort();}catch(e){}
-    activeRecognition=null;
-  }
-}
-
-// Returns a promise that resolves with the transcript after the user speaks.
-// Waits LISTEN_DELAY ms after start() before the mic is "hot" — gives the
-// browser time to open the mic so the first syllable isn't clipped.
-const LISTEN_DELAY=650;
-
 function listenOnce(onInterim){
   return new Promise((res)=>{
     if(!SR){res('');return;}
-    abortRecognition();
+    // Always create a fresh instance — reusing after abort leaves Safari in a bad state
+    if(activeRecognition){try{activeRecognition.abort();}catch(e){} activeRecognition=null;}
     const rec=new SR();
     rec.continuous=false;
     rec.interimResults=true;
@@ -1025,15 +1014,15 @@ function listenOnce(onInterim){
     activeRecognition=rec;
     let final='';
     let settled=false;
-    let ready=false;
     function settle(val){
       if(settled)return;
       settled=true;
       activeRecognition=null;
       res(val);
     }
+    // 10-second hard timeout so we never hang silently
+    const timeout=setTimeout(()=>settle(final),10000);
     rec.onresult=e=>{
-      if(!ready)return; // discard anything captured before the delay
       let interim='';
       for(let i=e.resultIndex;i<e.results.length;i++){
         const r=e.results[i];
@@ -1042,15 +1031,13 @@ function listenOnce(onInterim){
       }
       if(onInterim)onInterim(final||interim);
     };
-    rec.onend=()=>settle(final);
+    rec.onend=()=>{clearTimeout(timeout);settle(final);};
     rec.onerror=e=>{
+      clearTimeout(timeout);
       if(e.error==='not-allowed'||e.error==='service-not-allowed')speechAvailable=false;
       settle('');
     };
-    try{
-      rec.start();
-      setTimeout(()=>{ready=true;},LISTEN_DELAY);
-    }catch(e){settle('');}
+    try{rec.start();}catch(e){clearTimeout(timeout);settle('');}
   });
 }
 
@@ -1065,7 +1052,6 @@ let guideScript=[];
 let guideIndex=0;
 let guideRunning=false;
 let guidePaused=false;
-let sessionId=0; // incremented on every new session to cancel stale async loops
 
 function setState(s){
   STATE=s;
@@ -1173,14 +1159,12 @@ function setListening(on){
 
 // ─── STATE HANDLERS ───
 async function startVoiceSession(){
-  sessionId++;
   openPlayer();
   await delay(200);
   await doAskActivity();
 }
 
 async function doAskActivity(){
-  sessionId++;
   setState('ask_activity');
   showMicArea(true);
   el('vp-session-name').textContent='What are you doing?';
@@ -1200,42 +1184,41 @@ async function doAskActivity(){
     return;
   }
   el('vp-activity-grid').style.display='none';
+  el('vp-state-text').textContent='Tap the orb to speak';
   el('vp-transcript').textContent='';
-  await speakText({text:"What are you doing right now?",filename:"prompt_what_are_you_doing.mp3",pause:1});
-  listenLoop(sessionId);
+  // Auto-speak the question then listen
+  await speakText({text:"What are you doing right now?",filename:"prompt_what_are_you_doing.mp3",pause:2});
+  await listenForActivity();
 }
 
-// Continuous listen loop — runs until it gets a recognized activity or sessionId changes.
-async function listenLoop(mySession){
-  while(STATE==='ask_activity'&&mySession===sessionId){
-    setListening(true);
-    el('vp-state-text').textContent='Listening…';
-    el('vp-transcript').textContent='';
-    const t=await listenOnce(interim=>{
-      if(mySession===sessionId)el('vp-transcript').textContent=interim;
-    });
-    if(mySession!==sessionId)return;
-    setListening(false);
-    el('vp-transcript').textContent='';
-    if(!t){
-      el('vp-state-text').textContent='Still here — say what you\'re doing…';
-      await delay(300);
-      continue;
-    }
-    const result=parseActivity(t);
-    if(!result){
-      el('vp-state-text').textContent='Try: eating, tea, walking, traffic…';
-      await speakText({text:"Try saying: eating, tea, walking, or traffic.",filename:"prompt_didnt_catch.mp3",pause:1});
-      if(mySession!==sessionId)return;
-      continue; // loop back and listen again
-    }
-    // Got a match — hand off
-    if(result.confidence<0.9){
-      await doConfirm(result);
-    } else {
-      await doSelectActivity(result.id);
-    }
+async function listenForActivity(){
+  if(!speechAvailable)return;
+  setListening(true);
+  el('vp-state-text').textContent='Listening…';
+  const t=await listenOnce(interim=>el('vp-transcript').textContent=interim);
+  setListening(false);
+  el('vp-transcript').textContent='';
+  if(!t){
+    el('vp-state-text').textContent="Didn't catch that — listening again…";
+    await delay(1200);
+    if(STATE==='ask_activity')listenForActivity();
     return;
+  }
+  el('vp-state-text').textContent='';
+  processActivity(t);
+}
+
+async function processActivity(t){
+  const result=parseActivity(t);
+  if(!result){
+    el('vp-state-text').textContent="Say eating, tea, cooking, traffic, waiting, walking, cleaning, or starting work.";
+    await speakText({text:"I didn't catch that. Say eating, tea, cooking, traffic, waiting, walking, cleaning, or starting work.",filename:"prompt_didnt_catch.mp3",pause:2});
+    return;
+  }
+  if(result.confidence<0.9){
+    await doConfirm(result);
+  } else {
+    await doSelectActivity(result.id);
   }
 }
 
@@ -1354,21 +1337,16 @@ async function showClose(){
   setPlayerBg(null);
   await speakText({text:"Another one, reflect, or finish?",filename:"prompt_end_choice.mp3",pause:2});
   if(speechAvailable&&STATE==='closing'){
-    const mySession=sessionId;
     setListening(true);
     el('vp-state-text').textContent='Listening…';
     const t=await listenOnce(interim=>el('vp-transcript').textContent=interim);
     setListening(false);
     el('vp-transcript').textContent='';
-    if(mySession!==sessionId)return; // user tapped a button already
     if(t&&STATE==='closing'){
       const intent=parseControl(t);
       if(intent==='stop'){guideRunning=false;closePlayer();return;}
-      if(intent==='repeat'){sessionId++;startPractice(currentDuration);return;}
+      if(intent==='repeat'){startPractice(currentDuration);return;}
       // any other speech = another practice
-      abortRecognition();
-      sessionId++;
-      await delay(300);
       doAskActivity();
     }
   }
@@ -1426,13 +1404,11 @@ document.getElementById('ob-enter-btn').addEventListener('click',()=>{
 // Home → voice
 document.getElementById('home-voice-btn').addEventListener('click',()=>startVoiceSession());
 
-// Orb tap — restart the listen loop
+// Orb tap (in ask/confirm states = listen again)
 el('vp-mic-wrap').addEventListener('click',()=>{
   if(STATE==='ask_activity'){
     stopSpeaking();
-    abortRecognition();
-    sessionId++;
-    listenLoop(sessionId);
+    listenForActivity();
   }
 });
 
@@ -1479,9 +1455,9 @@ el('ctrl-stop').addEventListener('click',()=>{
 });
 
 // Closing
-el('close-another').addEventListener('click',()=>{sessionId++;abortRecognition();stopSpeaking();doAskActivity();});
-el('close-repeat').addEventListener('click',()=>{sessionId++;abortRecognition();stopSpeaking();startPractice(currentDuration);});
-el('close-finish').addEventListener('click',()=>{sessionId++;guideRunning=false;closePlayer();});
+el('close-another').addEventListener('click',()=>{stopSpeaking();doAskActivity();});
+el('close-repeat').addEventListener('click',()=>{stopSpeaking();startPractice(currentDuration);});
+el('close-finish').addEventListener('click',()=>{guideRunning=false;closePlayer();});
 
 // ═══════════════════════════════════════════════════
 // INIT
