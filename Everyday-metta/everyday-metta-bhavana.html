@@ -1180,6 +1180,7 @@ async function startVoiceSession(){
 }
 
 async function doAskActivity(){
+  sessionId++;
   setState('ask_activity');
   showMicArea(true);
   el('vp-session-name').textContent='What are you doing?';
@@ -1199,17 +1200,13 @@ async function doAskActivity(){
     return;
   }
   el('vp-activity-grid').style.display='none';
-  el('vp-state-text').textContent='Tap the orb to speak';
   el('vp-transcript').textContent='';
-  // Auto-speak the question then listen
-  await speakText({text:"What are you doing right now?",filename:"prompt_what_are_you_doing.mp3",pause:2});
-  await listenForActivity();
+  await speakText({text:"What are you doing right now?",filename:"prompt_what_are_you_doing.mp3",pause:1});
+  listenLoop(sessionId);
 }
 
-async function listenForActivity(){
-  if(!speechAvailable)return;
-  const mySession=sessionId;
-  // Keep looping until we get a result or the session changes
+// Continuous listen loop — runs until it gets a recognized activity or sessionId changes.
+async function listenLoop(mySession){
   while(STATE==='ask_activity'&&mySession===sessionId){
     setListening(true);
     el('vp-state-text').textContent='Listening…';
@@ -1217,32 +1214,28 @@ async function listenForActivity(){
     const t=await listenOnce(interim=>{
       if(mySession===sessionId)el('vp-transcript').textContent=interim;
     });
-    if(mySession!==sessionId)return; // new session took over
-    el('vp-transcript').textContent='';
-    if(t){
-      setListening(false);
-      el('vp-state-text').textContent='';
-      processActivity(t);
-      return;
-    }
-    // No result — brief visual blink so user sees it restarting, then loop
+    if(mySession!==sessionId)return;
     setListening(false);
-    el('vp-state-text').textContent='Still listening…';
-    await delay(400);
-  }
-}
-
-async function processActivity(t){
-  const result=parseActivity(t);
-  if(!result){
-    el('vp-state-text').textContent="Say eating, tea, cooking, traffic, waiting, walking, cleaning, or starting work.";
-    await speakText({text:"I didn't catch that. Say eating, tea, cooking, traffic, waiting, walking, cleaning, or starting work.",filename:"prompt_didnt_catch.mp3",pause:2});
+    el('vp-transcript').textContent='';
+    if(!t){
+      el('vp-state-text').textContent='Still here — say what you\'re doing…';
+      await delay(300);
+      continue;
+    }
+    const result=parseActivity(t);
+    if(!result){
+      el('vp-state-text').textContent='Try: eating, tea, walking, traffic…';
+      await speakText({text:"Try saying: eating, tea, walking, or traffic.",filename:"prompt_didnt_catch.mp3",pause:1});
+      if(mySession!==sessionId)return;
+      continue; // loop back and listen again
+    }
+    // Got a match — hand off
+    if(result.confidence<0.9){
+      await doConfirm(result);
+    } else {
+      await doSelectActivity(result.id);
+    }
     return;
-  }
-  if(result.confidence<0.9){
-    await doConfirm(result);
-  } else {
-    await doSelectActivity(result.id);
   }
 }
 
@@ -1433,11 +1426,13 @@ document.getElementById('ob-enter-btn').addEventListener('click',()=>{
 // Home → voice
 document.getElementById('home-voice-btn').addEventListener('click',()=>startVoiceSession());
 
-// Orb tap (in ask/confirm states = listen again)
+// Orb tap — restart the listen loop
 el('vp-mic-wrap').addEventListener('click',()=>{
   if(STATE==='ask_activity'){
     stopSpeaking();
-    listenForActivity();
+    abortRecognition();
+    sessionId++;
+    listenLoop(sessionId);
   }
 });
 
